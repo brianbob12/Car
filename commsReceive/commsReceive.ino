@@ -5,14 +5,21 @@
 #define DIGITAL_HIGH_WIDTH 1500//us
 #define DELTA_TIME_TOLERANCE 100//us
 
+#define TIME_BETWEEN_MESSAGES 3* COMMS_BAUD_PERIOD
+#define TIME_BETWEEN_MESSAGES_TOLERANCE 100//us
+#define EFFECTIVE_TIME_BETWEEN_MESSAGES TIME_BETWEEN_MESSAGES - TIME_BETWEEN_MESSAGES_TOLERANCE
+
+#define MESSAGE_INT_LENGTH 10
+#define MESSAGE_BIT_LENGTH MESSAGE_INT_LENGTH * 8
 
 const int commsPin = 10;
 
-const int message[MESSAGE_INT_LENGTH] = {0,0,0,0,0,0,0,0,0,0};
+int message[MESSAGE_INT_LENGTH] = {0,0,0,0,0,0,0,0,0,0};
 int messageIndex = 0;
 
 int commsPinLastState = LOW;
 int commsPinRisingEdgeTime = 0; //in us
+int commsPinFallingEdgeTime = 0; //in us
 
 void setup() {
   pinMode(commsPin, INPUT);
@@ -42,8 +49,13 @@ void readCommsPin(){
     if(commsPinState == HIGH){
       //Rising edge
       commsPinRisingEdgeTime = micros();
+      if(commsPinRisingEdgeTime - commsPinFallingEdgeTime > EFFECTIVE_TIME_BETWEEN_MESSAGES){
+        //New message
+        messageIndex = 0;
+      }
     }else{
       //Falling edge
+      commsPinFallingEdgeTime = micros();
       int pulseWidth = micros() - commsPinRisingEdgeTime;
       if(
         pulseWidth > DIGITAL_HIGH_WIDTH - DELTA_TIME_TOLERANCE &&

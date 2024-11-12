@@ -2,10 +2,12 @@
 
 const int commsPin =10;
 #define COMMS_BAUD_PERIOD 10000//us
-#define DIGITAL_LOW_WIDTH 500//us
+#define DIGITAL_LOW_WIDTH 1500//us
 #define DIGITAL_LOW_WAIT COMMS_BAUD_PERIOD - DIGITAL_LOW_WIDTH//us
-#define DIGITAL_HIGH_WIDTH 1500//us
+#define DIGITAL_HIGH_WIDTH 3000//us
 #define DIGITAL_HIGH_WAIT COMMS_BAUD_PERIOD - DIGITAL_HIGH_WIDTH//us
+
+#define TIME_BETWEEN_MESSAGES 3* COMMS_BAUD_PERIOD
 
 #define MESSAGE_INT_LENGTH 10
 #define MESSAGE_BIT_LENGTH MESSAGE_INT_LENGTH * 8
@@ -40,15 +42,21 @@ void sendBit(bool bit){
     digitalWrite(commsPin, LOW);
     delayMicroseconds(DIGITAL_HIGH_WAIT);
   }else{
-    digitalWrite(commsPin, LOW);
-    delayMicroseconds(DIGITAL_LOW_WIDTH);
     digitalWrite(commsPin, HIGH);
+    delayMicroseconds(DIGITAL_LOW_WIDTH);
+    digitalWrite(commsPin, LOW);
     delayMicroseconds(DIGITAL_LOW_WAIT);
   }
 }
 
-void loop() {
-  if(messageIndex < MESSAGE_BIT_LENGTH){
+void sendMessage(){
+  messageIndex = 0;
+  delayMicroseconds(TIME_BETWEEN_MESSAGES);
+  for(int i = 0; i < MESSAGE_BIT_LENGTH; i++){
     sendBit(getNextBit());
   }
+}
+
+void loop() {
+  sendMessage();
 }
