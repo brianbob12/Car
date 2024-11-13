@@ -1,4 +1,9 @@
 #include "driver/ledc.h"
+#include "CommsSend.h"
+
+//There must be a global function called onMessageCompleteExternal(messageJustSent[MESSAGE_INT_LENGTH])
+
+
 
 const int commsPin =10;
 #define COMMS_BAUD_PERIOD 10000//us
@@ -9,11 +14,19 @@ const int commsPin =10;
 
 #define TIME_BETWEEN_MESSAGES 3* COMMS_BAUD_PERIOD
 
-#define MESSAGE_INT_LENGTH 3
 #define MESSAGE_BIT_LENGTH MESSAGE_INT_LENGTH * 8
 
-//The message to send as a series of integers
-const int message[MESSAGE_INT_LENGTH] = {0,0,0};
+//The message currently being sent
+int message[MESSAGE_INT_LENGTH] = {0,0,0};
+
+//The next message to send (safe to change)
+int nextMessage[MESSAGE_INT_LENGTH] = {0,0,0};
+
+void setNextMessage(int messageToSend[MESSAGE_INT_LENGTH]){
+  for(int i = 0; i < MESSAGE_INT_LENGTH; i++){
+    nextMessage[i] = messageToSend[i];
+  }
+}
 
 //Index of the next bit to send
 int messageIndex = MESSAGE_BIT_LENGTH;
@@ -26,19 +39,9 @@ void setCommsPinState(bool state){
   digitalWrite(commsPin, currentCommsPinState);
 }
 
-int lastPrintTime = 0;
-bool isTimeToPrint(){
-  int currentTime = millis();
-  if(currentTime - lastPrintTime > 1000){
-    lastPrintTime = currentTime;
-    return true;
-  }
-  return false;
-}
 
-void setup() {
+void setup_commsSend() {
   pinMode(commsPin, OUTPUT);
-  Serial.begin(115200);
 }
 
 bool getCurrentBit(){
@@ -46,7 +49,11 @@ bool getCurrentBit(){
 }
 
 void onMessageComplete(){
-
+  onMessageCompleteExternal(nextMessage);
+  //copy nextMessage to message
+  for(int i = 0; i < MESSAGE_INT_LENGTH; i++){
+    message[i] = nextMessage[i];
+  }
 }
 
 #define SEND_1_HIGH_PART 1
@@ -133,6 +140,6 @@ void commsLoop(){
   }
 }
 
-void loop() {
+void loop_commsSend() {
   commsLoop();
 }
