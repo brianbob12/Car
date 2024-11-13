@@ -1,4 +1,4 @@
-#include "driver/ledc.h"
+#include "CommsReceive.h"
 
 #define COMMS_BAUD_PERIOD 10000    //us
 #define DIGITAL_LOW_WIDTH 3000     //us
@@ -59,32 +59,14 @@ bool noiseFilterReadCommsPin() {
   return trueCount > NOISE_FILTER_SAMPLE_COUNT / 2;
 }
 
-void setup() {
+void setup_commsReceive() {
   clearSamples();
   pinMode(commsPin, INPUT);
-
-  Serial.begin(115200);
-
-  Serial.println("Starting...");
-}
-
-int lastPrintTime = 0;
-bool isTimeToPrint() {
-  int currentTime = millis();
-  if (currentTime - lastPrintTime > 1000) {
-    lastPrintTime = currentTime;
-    return true;
-  }
-  return false;
 }
 
 
 void onMessageReceived() {
-  Serial.println("Message received");
-  for (int i = 0; i < MESSAGE_INT_LENGTH; i++) {
-    Serial.printf("%d ", message[i]);
-  }
-  Serial.println();
+  onMessageReceivedExternal(message);
 }
 
 void onBitReceived(bool bit) {
@@ -134,15 +116,7 @@ void readCommsPin() {
   }
 }
 
-void loop() {
+void loop_commsReceive() {
   readCommsPin();
-  //min delay
-  if (isTimeToPrint()) {
-    Serial.printf("Invalid pulse width count: %d\n", invalidPulseWidthCount);
-    Serial.printf("Last invalid pulse width: %d\n", lastInvalidPulseWidth);
-    float averageInvalidPulseWidth = (float)sumOfInvalidPulseWidths / invalidPulseWidthCount;
-    Serial.printf("Average invalid pulse width: %f\n", averageInvalidPulseWidth);
-    invalidPulseWidthCount = 0;
-    sumOfInvalidPulseWidths = 0;
-  }
 }
+

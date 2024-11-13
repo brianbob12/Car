@@ -2,7 +2,7 @@
 #define ENCODING_H
 
 // Maximum frequency that can be encoded (3 Hz maps to 255)
-#define FREQUENCY_MAX 3
+#define FREQUENCY_MAX 4
 
 // Function declarations
 int encodeFrequency(float frequency);

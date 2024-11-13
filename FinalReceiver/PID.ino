@@ -2,43 +2,41 @@
 #include "PID.h"
 
 
-
-
 //setup_PID
 
 //loop_PID
 
 //internal
 
-const int PWM_FREQ = 500;
+const int PWM_FREQ = 50;
 
 // Smoothing using an exponential moving average
 //smoothing factor of 0 is not smoothing and 1 is max smoothing(constant value)
 const float SMOOTHING_FACTOR = 0.5;
 
-// Motor 1 pins
-const int motor1DirectionPin = 6;
-const int motor1PWMpin = 0;
-const int motor1EncoderInputPin = 7;//sometimes 5
-unsigned long motor1LastEncoderTime = millis();
-unsigned long motor1LastEncoderMillis = 0;
-bool motor1LastEncoderState = HIGH;
-float motor1Frequency = 0;
-float motor1FrequencySmooth = 0;
-
-// Motor 2 pins
-const int motor2DirectionPin = 4;
-const int motor2PWMpin = 1;
-const int motor2EncoderInputPin = 5;//sometimes 7
+// Motor 2 (left) pins
+const int motor2DirectionPin = 6;
+const int motor2PWMpin = 0;
+const int motor2EncoderInputPin = 7;
 unsigned long motor2LastEncoderTime = millis();
 unsigned long motor2LastEncoderMillis = 0;
 bool motor2LastEncoderState = HIGH;
 float motor2Frequency = 0;
 float motor2FrequencySmooth = 0;
 
+// Motor 1 (right) pins
+const int motor1DirectionPin = 4;
+const int motor1PWMpin = 1;
+const int motor1EncoderInputPin = 5;
+unsigned long motor1LastEncoderTime = millis();
+unsigned long motor1LastEncoderMillis = 0;
+bool motor1LastEncoderState = HIGH;
+float motor1Frequency = 0;
+float motor1FrequencySmooth = 0;
 
 
-const int resolution = 8; // Resolution for PWM duty cycle (8-bit) max: 2^8 - 1 = 255
+
+const int resolution = 14; // Resolution for PWM duty cycle (14-bit) max: 2^14 - 1 = 16383
 int maxDutyCycle = pow(2, resolution) - 1;
 ledc_channel_t motor1Channel = LEDC_CHANNEL_0;
 ledc_timer_t motor1Timer = LEDC_TIMER_0;
@@ -46,45 +44,11 @@ ledc_channel_t motor2Channel = LEDC_CHANNEL_1;
 ledc_timer_t motor2Timer = LEDC_TIMER_1;
 
 void configureMotor1Pin(){
-  ledc_timer_config_t motor1TimerConfig = {
-    .speed_mode = LEDC_LOW_SPEED_MODE,
-    .duty_resolution = LEDC_TIMER_8_BIT,
-    .timer_num = motor1Timer,
-    .freq_hz = PWM_FREQ,
-    .clk_cfg = LEDC_AUTO_CLK
-  };
-  ledc_timer_config(&motor1TimerConfig);
-
-  ledc_channel_config_t motor1ChannelConfig = {
-    .gpio_num = motor1PWMpin,
-    .speed_mode = LEDC_LOW_SPEED_MODE,
-    .channel = motor1Channel,
-    .timer_sel = motor1Timer,
-    .duty = 0,
-    .hpoint = 0
-  };
-  ledc_channel_config(&motor1ChannelConfig);
+  ledcAttach(motor1PWMpin, PWM_FREQ, resolution);
 }
 
 void configureMotor2Pin(){
-   ledc_timer_config_t motor2TimerConfig = {
-    .speed_mode = LEDC_LOW_SPEED_MODE,
-    .duty_resolution = LEDC_TIMER_8_BIT,
-    .timer_num = motor2Timer,
-    .freq_hz = PWM_FREQ,
-    .clk_cfg = LEDC_AUTO_CLK
-  };
-  ledc_timer_config(&motor2TimerConfig);
-
-  ledc_channel_config_t motor2ChannelConfig = {
-    .gpio_num = motor2PWMpin,
-    .speed_mode = LEDC_LOW_SPEED_MODE,
-    .channel = motor2Channel,
-    .timer_sel = motor2Timer,
-    .duty = 0,
-    .hpoint = 0
-  };
-  ledc_channel_config(&motor2ChannelConfig);
+  ledcAttach(motor2PWMpin, PWM_FREQ, resolution);
 }
 
 
@@ -97,10 +61,12 @@ float motor2TargetFrequency = 1;  // Target frequency in Hz
 
 void setMotor1Direction(bool direction){
   motor1Direction = direction;
+  updateMotor1Direction();
 }
 
 void setMotor2Direction(bool direction){
   motor2Direction = direction;
+  updateMotor2Direction();
 }
 
 void setMotor1TargetFrequency(float frequency){
@@ -116,20 +82,18 @@ void updateMotor1Direction() {
 }
 
 void updateMotor2Direction() {
-  digitalWrite(motor2DirectionPin, motor2Direction ? HIGH : LOW);
+  digitalWrite(motor2DirectionPin, motor2Direction ? LOW : HIGH);
 }
 
 //valid speeds are 0 to 1
 void updateMotor1Speed(float speed) {
   int dutyCycle = speed * maxDutyCycle;
-  ledc_set_duty(LEDC_LOW_SPEED_MODE, motor1Channel, dutyCycle);
-  ledc_update_duty(LEDC_LOW_SPEED_MODE, motor1Channel);
+  ledcWrite(motor1PWMpin, dutyCycle);
 }
 
 void updateMotor2Speed(float speed) {
   int dutyCycle = speed * maxDutyCycle;
-  ledc_set_duty(LEDC_LOW_SPEED_MODE, motor2Channel, dutyCycle);
-  ledc_update_duty(LEDC_LOW_SPEED_MODE, motor2Channel);
+  ledcWrite(motor2PWMpin, dutyCycle);
 }
 
 void readMotor1Encoder(){
@@ -175,9 +139,9 @@ void readMotor2Encoder(){
 }
 
 // PID Constants
-const float KP = 0.6;   // Increased for faster response
-const float KI = 0.15;   // Increased to reduce steady-state error
-const float KD = 0.08;   // Adjusted for better damping
+const float KP = 0.3;   // Increased for faster response
+const float KI = 0.1;   // Increased to reduce steady-state error
+const float KD = 0.05;   // Adjusted for better damping
 
 // PID Variables
 
@@ -195,16 +159,9 @@ float calculateMotor1PID() {
     if (deltaTime > 0) {
         motor1Integral += error * deltaTime;
         float derivative = (error - motor1LastError) / deltaTime;
-
-        if(timeToPrint()){
-          Serial.printf("Error: %.2f, Integral: %.2f, Derivative: %.2f\n", error, motor1Integral, derivative);
-        }
         
         float output = (KP * error) + (KI * motor1Integral) + (KD * derivative);
         
-        if(timeToPrint()){
-          Serial.printf("Raw Output: %.2f\n", output);
-        }
         
         // Clamp output to valid range (0 to 1)
         output = constrain(output, 0.0, 1.0);
@@ -213,7 +170,6 @@ float calculateMotor1PID() {
         motor1LastPIDTime = currentTime;
         return output;
     }
-    Serial.printf("No time passed\n");
     return 0;
 }
 
@@ -231,15 +187,8 @@ float calculateMotor2PID() {
     motor2Integral += error * deltaTime;
     float derivative = (error - motor2LastError) / deltaTime;
 
-    if(timeToPrint()){
-      Serial.printf("Error: %.2f, Integral: %.2f, Derivative: %.2f\n", error, motor2Integral, derivative);
-    }
 
     float output = (KP * error) + (KI * motor2Integral) + (KD * derivative);
-
-    if(timeToPrint()){
-      Serial.printf("Raw Output: %.2f\n", output);
-    }
 
     // Clamp output to valid range (0 to 1)
     output = constrain(output, 0.0, 1.0);
@@ -248,27 +197,23 @@ float calculateMotor2PID() {
     motor2LastPIDTime = currentTime;
     return output;
   }
-  Serial.printf("No time passed\n");
   return 0;
 }
 
 void setup_PID() {
   // Setup motor control pins and PWM
   pinMode(motor1DirectionPin, OUTPUT);
+  pinMode(motor2DirectionPin, OUTPUT);
   configureMotor1Pin();
   configureMotor2Pin();
 
   // Set initial motor directions
   updateMotor1Direction();
   updateMotor2Direction();
+
   // Add this after the pinMode for encoder
   pinMode(motor1EncoderInputPin, INPUT_PULLUP);  // Enable internal pullup
   pinMode(motor2EncoderInputPin, INPUT_PULLUP);  // Enable internal pullup
-}
-
-int lastPrintTime = millis();
-bool timeToPrint(){
-  return millis() - lastPrintTime > 1000;
 }
 
 void loop_PID() {
@@ -284,15 +229,4 @@ void loop_PID() {
   readMotor1Encoder();
   readMotor2Encoder();
 
-  if(timeToPrint()){
-    Serial.printf("Motor 1 Frequency: %.2f Hz\n", motor1Frequency);
-    Serial.printf("Motor 1 Frequency Smooth: %.2f Hz\n", motor1FrequencySmooth);
-    Serial.printf("Motor 1 PID Output: %.2f\n", motor1PIDOutput);
-
-    Serial.printf("Motor 2 Frequency: %.2f Hz\n", motor2Frequency);
-    Serial.printf("Motor 2 Frequency Smooth: %.2f Hz\n", motor2FrequencySmooth);
-    Serial.printf("Motor 2 PID Output: %.2f\n", motor2PIDOutput);
-
-    lastPrintTime = millis();
-  }
 }

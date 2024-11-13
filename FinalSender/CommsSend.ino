@@ -4,7 +4,6 @@
 //There must be a global function called onMessageCompleteExternal(messageJustSent[MESSAGE_INT_LENGTH])
 
 
-
 const int commsPin =10;
 #define COMMS_BAUD_PERIOD 10000//us
 #define DIGITAL_LOW_WIDTH 3000//us
@@ -49,7 +48,7 @@ bool getCurrentBit(){
 }
 
 void onMessageComplete(){
-  onMessageCompleteExternal(nextMessage);
+  onMessageCompleteExternal(message);
   //copy nextMessage to message
   for(int i = 0; i < MESSAGE_INT_LENGTH; i++){
     message[i] = nextMessage[i];
