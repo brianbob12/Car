@@ -8,7 +8,7 @@ const char body[] PROGMEM = R"===(
 <h1>Motor Control</h1>
 <p>Adjust the slider to set motor speed and use WASD keys to control direction (Space to stop).</p>
 <label for='speed'>Speed (0 to 100%): </label>
-<input type='range' id='speed' min='0' max='100' value='50' oninput='updateSpeed()'><span id='speedValue'>50</span>%<br><br>
+<input type='range' id='speed' min='0' max='100' value='0' oninput='updateSpeed()'><span id='speedValue'>0</span>%<br><br>
 <div id="controls">
   <p>Controls:</p>
   <ul>
