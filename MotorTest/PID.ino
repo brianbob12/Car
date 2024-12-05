@@ -48,14 +48,28 @@ void updateMotorSpeedToPIDOutput(Motor &motor){
   updateMotorSpeed(motor, motor.pidOutput);
 }
 
+void clearEncoderRunningCount(Motor &motor){
+  motor.encoderRunningCount = 0;
+  motor.encoderRunningCountStartMillis = millis();
+}
+
+float readEncoderRunningCount(Motor &motor){
+  int currentMillis = millis();
+  int timeSinceStart = currentMillis - motor.encoderRunningCountStartMillis;
+  float timeSinceStartSeconds = timeSinceStart / 1000.0;
+  float frequency = motor.encoderRunningCount / timeSinceStartSeconds;
+  return frequency;
+}
+
 void readMotorEncoder(Motor &motor){
   bool encoderState = digitalRead(motor.encoderPin);
   int currentMillis = millis();
   float timePeriod = (currentMillis - motor.lastEncoderMillis) / 1000.0;
   if (motor.lastEncoderState == HIGH && encoderState == LOW) {
-    if(timePeriod > 0.005){
+    if(timePeriod > ENCODER_GUARD){
       motor.frequency = 1 / (timePeriod * ENCODER_STEPS_PER_REVOLUTION);
       motor.frequencySmooth = SMOOTHING_FACTOR * motor.frequencySmooth + (1 - SMOOTHING_FACTOR) * motor.frequency;
+      motor.encoderRunningCount++;
     }
     motor.lastEncoderMillis = currentMillis;
   }
@@ -116,6 +130,8 @@ void printMotorPID(Motor &motor, String motorName){
   Serial.printf("%s Frequency: %.2f\n", motorName.c_str(), motor.frequency);
   Serial.printf("%s Frequency Smooth: %.2f\n", motorName.c_str(), motor.frequencySmooth);
   Serial.printf("%s PID Output: %.2f\n", motorName.c_str(), motor.pidOutput);
+  Serial.printf("%s Encoder Running Count Frequency: %.2f\n", motorName.c_str(), readEncoderRunningCount(motor));
+  clearEncoderRunningCount(motor);
 }
 
 void loop_PID_for_motor(Motor &motor){

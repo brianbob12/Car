@@ -25,6 +25,8 @@ struct Motor {
     float frequencySmooth;
     bool direction;
     float targetFrequency;
+    int encoderRunningCount;
+    int encoderRunningCountStartMillis;
     
     // PID variables
     float lastError;
@@ -37,6 +39,8 @@ void setMotorDirection(Motor &motor, bool direction);
 void setMotorTargetFrequency(Motor &motor, float frequency);
 
 #define SMOOTHING_FACTOR 0.2
+#define ENCODER_GUARD 0.01 //the ammount of time in seconds under which we ignore encoder signals
+//This corresponds to about 10Hz
 
 #define ENCODER_STEPS_PER_REVOLUTION 11
 
@@ -60,6 +64,8 @@ Motor motor1 = {
     0, // frequencySmooth
     true, // direction
     1, // targetFrequency
+    0, // encoderRunningCount
+    0, // encoderRunningCountStartMillis
     0, // lastError
     0, // integral
     0, // lastPIDTime
@@ -84,6 +90,8 @@ Motor motor2 = {
     0, // frequencySmooth
     true, // direction
     1, // targetFrequency
+    0, // encoderRunningCount
+    0, // encoderRunningCountStartMillis
     0, // lastError
     0, // integral
     0, // lastPIDTime
@@ -108,6 +116,8 @@ Motor motor3 = {
     0, // frequencySmooth
     true, // direction
     1, // targetFrequency
+    0, // encoderRunningCount
+    0, // encoderRunningCountStartMillis
     0, // lastError
     0, // integral
     0, // lastPIDTime
@@ -132,6 +142,8 @@ Motor motor4 = {
     0, // frequencySmooth
     true, // direction
     1, // targetFrequency
+    0, // encoderRunningCount
+    0, // encoderRunningCountStartMillis
     0, // lastError
     0, // integral
     0, // lastPIDTime
