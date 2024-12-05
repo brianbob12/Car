@@ -50,6 +50,7 @@ bool noiseFilterReadCommsPin() {
   sampleIndex++;
   sampleIndex %= NOISE_FILTER_SAMPLE_COUNT;
 
+  // Count HIGH samples and return true if majority are HIGH
   int trueCount = 0;
   for (int i = 0; i < NOISE_FILTER_SAMPLE_COUNT; i++) {
     if (samples[i]) {
@@ -69,23 +70,26 @@ void onMessageReceived() {
   onMessageReceivedExternal(message);
 }
 
+// Processes each received bit and assembles it into the message array
 void onBitReceived(bool bit) {
   message[messageIndex / 8] = setBit(message[messageIndex / 8], bit, messageIndex % 8);
   messageIndex++;
-  if (messageIndex == MESSAGE_BIT_LENGTH) {
+  if (messageIndex == MESSAGE_BIT_LENGTH) {  // Message complete
     messageIndex = 0;
     onMessageReceived();
   }
 }
 
+// Statistics for debugging communication issues
 int invalidPulseWidthCount = 0;
 int lastInvalidPulseWidth = 0;
 int sumOfInvalidPulseWidths = 0;
 
+// Main communication reading function - detects edges and decodes bits
 void readCommsPin() {
   int commsPinState = noiseFilterReadCommsPin();
-  if (commsPinState != commsPinLastState) {
-    if (commsPinState == HIGH) {
+  if (commsPinState != commsPinLastState) {  // Edge detected
+    if (commsPinState == HIGH) {  // Rising edge
       //Rising edge
       commsPinRisingEdgeTime = micros();
       int lowWidth = commsPinRisingEdgeTime - commsPinFallingEdgeTime;
@@ -94,19 +98,20 @@ void readCommsPin() {
         //New message
         messageIndex = 0;
       }
-    } else {
-      //Falling edge
+    } else {  // Falling edge
+      // Decode bit based on pulse width
       commsPinFallingEdgeTime = micros();
       int pulseWidth = micros() - commsPinRisingEdgeTime;
 
+      // Check if pulse width matches expected durations for 1 or 0
       if (
         pulseWidth > DIGITAL_HIGH_WIDTH - DELTA_TIME_TOLERANCE && pulseWidth < DIGITAL_HIGH_WIDTH + DELTA_TIME_TOLERANCE) {
-        onBitReceived(true);
+        onBitReceived(true);  // Long pulse = 1
       } else if (
         pulseWidth > DIGITAL_LOW_WIDTH - DELTA_TIME_TOLERANCE && pulseWidth < DIGITAL_LOW_WIDTH + DELTA_TIME_TOLERANCE) {
-        onBitReceived(false);
+        onBitReceived(false);  // Short pulse = 0
       } else {
-        //Invalid pulse width
+        // Track invalid pulses for debugging
         invalidPulseWidthCount++;
         lastInvalidPulseWidth = pulseWidth;
         sumOfInvalidPulseWidths += pulseWidth;

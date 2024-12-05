@@ -3,7 +3,9 @@
 #include "PID.h"
 #include "MyServer.h"
 
-
+// Callback function executed when a message has been fully sent
+// Decodes the message that was just sent and updates motor states accordingly
+// This is so that the motors in the front and back change at the same time
 void onMessageCompleteExternal(int messageJustSent[MESSAGE_INT_LENGTH]){
   //decode the message
   int directions = messageJustSent[0];
@@ -24,11 +26,15 @@ void setState(bool motor1Direction, float motor1Frequency, bool motor2Direction,
   int frequency1 = encodeFrequency(motor1Frequency);
   int frequency2 = encodeFrequency(motor2Frequency);
   int message[MESSAGE_INT_LENGTH] = {direction, frequency1, frequency2};
-  //int message[MESSAGE_INT_LENGTH] = {0, 0, 0};
   setNextMessage(message);
 }
 
-int speed = 2; //speed of the motors in Hz
+// Global speed setting for all movement commands (in Hz)
+// This is variable
+int speed = 2;
+
+// Movement command functions
+// Each function sets appropriate motor directions and speeds for the desired movement
 
 void goForward(){
   setState(false, speed, true, speed);
@@ -50,6 +56,8 @@ void stop(){
   setState(false, 0, false, 0);
 }
 
+// Callback function for web interface updates
+// Handles new speed settings and direction commands
 void onUpdate(float newSpeed, int newDirection){
   speed = newSpeed;
   if(newDirection == FORWARD){
@@ -72,29 +80,6 @@ void onUpdate(float newSpeed, int newDirection){
   }
 }
 
-// int direction = 0;
-// #define TOGGLE_TIME 5000
-// unsigned long lastToggleTime = 0;
-
-// void toggleDirectionIfTime(){
-//   if(millis() - lastToggleTime > TOGGLE_TIME){
-//     direction += 1;
-//     direction %= 4;
-//     if(direction == 0){
-//       goForward();
-//     }
-//     else if(direction == 1){
-//       goLeft();
-//     }
-//     else if(direction == 2){
-//       goRight();
-//     }
-//     else if(direction == 3){
-//       goBackward();
-//     }
-//     lastToggleTime = millis();
-//   }
-// }
 
 void setup(){
   Serial.begin(115200);
@@ -107,5 +92,4 @@ void loop(){
   loop_PID();
   loop_commsSend();
   loop_server();
-  //toggleDirectionIfTime();
 }
