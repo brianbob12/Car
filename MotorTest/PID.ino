@@ -54,27 +54,24 @@ void readMotorEncoder(Motor &motor){
   float timePeriod = (currentMillis - motor.lastEncoderMillis) / 1000.0;
   if (motor.lastEncoderState == HIGH && encoderState == LOW) {
     if(timePeriod > 0.005){
-      Serial.printf("Time period: %f\n", timePeriod);
       motor.frequency = 1 / (timePeriod * ENCODER_STEPS_PER_REVOLUTION);
-      Serial.printf("Motor 1 Frequency: %f\n", motor.frequency);
-      motor.frequencySmooth = (1 - SMOOTHING_FACTOR) * motor.frequencySmooth + SMOOTHING_FACTOR * motor.frequency;
-      Serial.printf("Motor 1 Frequency Smooth: %f\n", motor.frequencySmooth);
+      motor.frequencySmooth = SMOOTHING_FACTOR * motor.frequencySmooth + (1 - SMOOTHING_FACTOR) * motor.frequency;
     }
     motor.lastEncoderMillis = currentMillis;
   }
   else if(timePeriod > 1){
     //if it hasn't moved in 1 second set the frequency to 0
     motor.frequency = 0;
-    motor.frequencySmooth = (1 - SMOOTHING_FACTOR) * motor.frequencySmooth + SMOOTHING_FACTOR * motor.frequency;
+    motor.frequencySmooth = SMOOTHING_FACTOR * motor.frequencySmooth + (1 - SMOOTHING_FACTOR) * motor.frequency;
     motor.lastEncoderMillis = currentMillis;
   }
   motor.lastEncoderState = encoderState;
 }
 
 // PID Constants
-const float KP = 0.3;   // Increased for faster response
-const float KI = 0.1;   // Increased to reduce steady-state error
-const float KD = 0.05;   // Adjusted for better damping
+const float KP = 0.1;    // Decreased for slower response
+const float KI = 0.03;   // Decreased to reduce oscillations
+const float KD = 0.02;   // Decreased for gentler damping
 
 // PID Variables
 
@@ -88,16 +85,7 @@ float calculateMotorPID(Motor &motor) {
         motor.integral += error * deltaTime;
         float derivative = (error - motor.lastError) / deltaTime;
 
-        if(timeToPrint()){
-          Serial.printf("Error: %.2f, Integral: %.2f, Derivative: %.2f\n", error, motor.integral, derivative);
-        }
-        
         float output = (KP * error) + (KI * motor.integral) + (KD * derivative);
-        
-        if(timeToPrint()){
-          Serial.printf("Raw Output: %.2f\n", output);
-        }
-        
         // Clamp output to valid range (0 to 1)
         output = constrain(output, 0.0, 1.0);
         
