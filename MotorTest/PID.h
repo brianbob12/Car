@@ -45,11 +45,16 @@ void setMotorTargetFrequency(Motor &motor, float frequency);
 //This was supposed to be 11 (from docs), but we observed it's much higher
 #define ENCODER_STEPS_PER_REVOLUTION 300
 
+//PID Constants
+#define KP 0.3
+#define KI 0.03
+#define KD 0.05
+
 
 #define MOTOR1_ENCODER_INPUT_PIN 42
 #define MOTOR1_ENCODER_B_PIN 41
-#define MOTOR1_DIRECTION_PIN 40
-#define MOTOR1_INVERSE_DIRECTION_PIN 39
+#define MOTOR1_DIRECTION_PIN 39
+#define MOTOR1_INVERSE_DIRECTION_PIN 40
 #define MOTOR1_PWM_PIN 38
 
 // Define motor1 as a struct instance
@@ -127,8 +132,8 @@ Motor motor3 = {
 
 #define MOTOR4_ENCODER_INPUT_PIN 11
 #define MOTOR4_ENCODER_B_PIN 10
-#define MOTOR4_DIRECTION_PIN 12
-#define MOTOR4_INVERSE_DIRECTION_PIN 13
+#define MOTOR4_DIRECTION_PIN 13
+#define MOTOR4_INVERSE_DIRECTION_PIN 12
 #define MOTOR4_PWM_PIN 14
 
 Motor motor4 = {

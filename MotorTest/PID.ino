@@ -82,11 +82,6 @@ void readMotorEncoder(Motor &motor){
   motor.lastEncoderState = encoderState;
 }
 
-// PID Constants
-const float KP = 0.1;    // Decreased for slower response
-const float KI = 0.03;   // Decreased to reduce oscillations
-const float KD = 0.02;   // Decreased for gentler damping
-
 // PID Variables
 
 float calculateMotorPID(Motor &motor) {
