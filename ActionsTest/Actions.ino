@@ -37,6 +37,11 @@ void addAction(Action &action){
 }
 
 Action popAction(){
+  if (action_queue.num_actions <= 0) {
+    Serial.println("WARNING: Attempting to pop from empty action queue");
+    return default_action;  // Return default action as fallback
+  }
+  
   Action action = action_queue.actions[0];
   
   // Shift remaining actions forward
@@ -64,7 +69,17 @@ void setMotorSpeeds(Action &action){
 }
 
 void startAction(Action &action){
-  current_action = action;
+  // Make a local copy by explicitly copying each field
+  current_action.motor1_speed = action.motor1_speed;
+  current_action.motor1_direction = action.motor1_direction;
+  current_action.motor2_speed = action.motor2_speed;
+  current_action.motor2_direction = action.motor2_direction;
+  current_action.motor3_speed = action.motor3_speed;
+  current_action.motor3_direction = action.motor3_direction;
+  current_action.motor4_speed = action.motor4_speed;
+  current_action.motor4_direction = action.motor4_direction;
+  current_action.duration = action.duration;
+  
   current_action_start_time = millis();
   has_current_action = true;
 
@@ -77,7 +92,7 @@ void setDefaultMotorSpeeds(Action &action){
 }
 
 void setup_Actions(){
-
+  action_queue.num_actions = 0;  // Initialize the queue
 }
 
 void loop_Actions(){
@@ -86,7 +101,8 @@ void loop_Actions(){
       setMotorSpeeds(default_action);
       return;
     }
-    startAction(popAction());
+    Action next_action = popAction();
+    startAction(next_action);
     return;
   }
 
@@ -98,7 +114,8 @@ void loop_Actions(){
       setMotorSpeeds(default_action);
       return;
     }
-    startAction(popAction());
+    Action next_action = popAction();
+    startAction(next_action);
     return;
   }
 }

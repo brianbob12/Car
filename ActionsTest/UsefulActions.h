@@ -13,7 +13,7 @@ Action forward_one_cell {
   .motor4_speed = 1,
   .motor4_direction = true,
   .duration = 1000 //1 second
-}
+};
 
 Action backward_one_cell {
   .motor1_speed = 1,
@@ -25,7 +25,7 @@ Action backward_one_cell {
   .motor4_speed = 1,
   .motor4_direction = false,
   .duration = 1000 //1 second
-}
+};
 
 Action turn_left_30_degrees {
   .motor1_speed = 1,
@@ -37,7 +37,7 @@ Action turn_left_30_degrees {
   .motor4_speed = 1,
   .motor4_direction = false,
   .duration = 1000 //1 second
-}
+};
 
 Action turn_right_30_degrees {
   .motor1_speed = 1,
@@ -49,7 +49,7 @@ Action turn_right_30_degrees {
   .motor4_speed = 1,
   .motor4_direction = true,
   .duration = 1000 //1 second
-}
+};
 
 Action turn_right_90_degrees {
   .motor1_speed = 1,
@@ -61,7 +61,7 @@ Action turn_right_90_degrees {
   .motor4_speed = 1,
   .motor4_direction = false,
   .duration = 1000 //1 second
-}
+};
 
 Action turn_left_90_degrees {
   .motor1_speed = 1,
@@ -73,6 +73,6 @@ Action turn_left_90_degrees {
   .motor4_speed = 1,
   .motor4_direction = true,
   .duration = 1000 //1 second
-}
+};
 
 #endif
