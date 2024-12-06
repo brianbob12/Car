@@ -4,6 +4,7 @@
 #include "Actions.h"
 
 Action forward_one_cell {
+  .name = "Forward One Cell",
   .motor1_speed = 1,
   .motor1_direction = true,
   .motor2_speed = 1,
@@ -16,6 +17,7 @@ Action forward_one_cell {
 };
 
 Action backward_one_cell {
+  .name = "Backward One Cell",
   .motor1_speed = 1,
   .motor1_direction = false,
   .motor2_speed = 1,
@@ -28,6 +30,7 @@ Action backward_one_cell {
 };
 
 Action turn_left_30_degrees {
+  .name = "Turn Left 30 Degrees",
   .motor1_speed = 1,
   .motor1_direction = true,
   .motor2_speed = 1,
@@ -40,6 +43,7 @@ Action turn_left_30_degrees {
 };
 
 Action turn_right_30_degrees {
+  .name = "Turn Right 30 Degrees",
   .motor1_speed = 1,
   .motor1_direction = false,
   .motor2_speed = 1,
@@ -52,6 +56,7 @@ Action turn_right_30_degrees {
 };
 
 Action turn_right_90_degrees {
+  .name = "Turn Right 90 Degrees",
   .motor1_speed = 1,
   .motor1_direction = false,
   .motor2_speed = 1,
@@ -64,6 +69,7 @@ Action turn_right_90_degrees {
 };
 
 Action turn_left_90_degrees {
+  .name = "Turn Left 90 Degrees",
   .motor1_speed = 1,
   .motor1_direction = true,
   .motor2_speed = 1,

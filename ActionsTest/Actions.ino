@@ -7,6 +7,7 @@ ActionQueue action_queue;
 Action current_action;
 
 Action default_action = Action {
+  .name = "Default",
   .motor1_speed = 0,
   .motor1_direction = true,
   .motor2_speed = 0,
@@ -55,6 +56,8 @@ Action popAction(){
 }
 
 void setMotorSpeeds(Action &action){
+  Serial.printf("Setting motor speeds for action: %s\n", action.name);
+
   setMotorTargetFrequency(motor1, action.motor1_speed);
   setMotorDirection(motor1, action.motor1_direction);
 
@@ -69,6 +72,8 @@ void setMotorSpeeds(Action &action){
 }
 
 void startAction(Action &action){
+  Serial.printf("Starting action: %s\n", action.name);
+
   // Make a local copy by explicitly copying each field
   current_action.motor1_speed = action.motor1_speed;
   current_action.motor1_direction = action.motor1_direction;

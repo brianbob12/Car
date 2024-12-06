@@ -5,6 +5,7 @@
 An action is a set of motor speeds and how long to maintain them
 */
 struct Action{
+  char name[40];
   //the speeds of the motors
   float motor1_speed;
   bool motor1_direction;

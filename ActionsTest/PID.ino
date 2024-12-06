@@ -143,12 +143,12 @@ void loop_PID() {
   loop_PID_for_motor(motor3);
   loop_PID_for_motor(motor4);
 
-  if(timeToPrint()){
-    printMotorPID(motor1, "Motor 1");
-    printMotorPID(motor2, "Motor 2");
-    printMotorPID(motor3, "Motor 3");
-    printMotorPID(motor4, "Motor 4");
+  // if(timeToPrint()){
+  //   printMotorPID(motor1, "Motor 1");
+  //   printMotorPID(motor2, "Motor 2");
+  //   printMotorPID(motor3, "Motor 3");
+  //   printMotorPID(motor4, "Motor 4");
 
-    lastPrintTime = millis();
-  }
+  //   lastPrintTime = millis();
+  // }
 }
