@@ -85,27 +85,32 @@ void readMotorEncoder(Motor &motor){
 // PID Variables
 
 float calculateMotorPID(Motor &motor) {
-    float error = motor.targetFrequency - motor.frequencySmooth;
-    unsigned long currentTime = micros();
-    float deltaTime = (currentTime - motor.lastPIDTime) / 1000000.0;// Convert to seconds
-    
-    // Only update if some time has passed
-    if (deltaTime > 0) {
-        motor.integral += error * deltaTime;
-        float derivative = (error - motor.lastError) / deltaTime;
-
-        float output = (KP * error) + (KI * motor.integral) + (KD * derivative);
-        // Clamp output to valid range (0 to 1)
-        output = constrain(output, 0.0, 1.0);
-        
-        motor.lastError = error;
-        motor.lastPIDTime = currentTime;
-        motor.pidOutput = output;
-        return output;
-    }
-    Serial.printf("No time passed\n");
+  if(motor.targetFrequency == 0){
     motor.pidOutput = 0;
     return 0;
+  }
+  //if the motor is not moving, set the pid output to 0
+  float error = motor.targetFrequency - motor.frequencySmooth;
+  unsigned long currentTime = micros();
+  float deltaTime = (currentTime - motor.lastPIDTime) / 1000000.0;// Convert to seconds
+  
+  // Only update if some time has passed
+  if (deltaTime > 0) {
+      motor.integral += error * deltaTime;
+      float derivative = (error - motor.lastError) / deltaTime;
+
+      float output = (KP * error) + (KI * motor.integral) + (KD * derivative);
+      // Clamp output to valid range (0 to 1)
+      output = constrain(output, 0.0, 1.0);
+      
+      motor.lastError = error;
+      motor.lastPIDTime = currentTime;
+      motor.pidOutput = output;
+      return output;
+  }
+  Serial.printf("No time passed\n");
+  motor.pidOutput = 0;
+  return 0;
 }
 
 void setup_PID() {
