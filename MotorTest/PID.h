@@ -39,14 +39,15 @@ void setMotorDirection(Motor &motor, bool direction);
 void setMotorTargetFrequency(Motor &motor, float frequency);
 
 #define SMOOTHING_FACTOR 0.2
-#define ENCODER_GUARD 0.01 //the ammount of time in seconds under which we ignore encoder signals
-//This corresponds to about 10Hz
+#define ENCODER_GUARD 0.00 //the ammount of time in seconds under which we ignore encoder signals
+//Through experimentation, this should be zero
 
-#define ENCODER_STEPS_PER_REVOLUTION 11
+//This was supposed to be 11 (from docs), but we observed it's much higher
+#define ENCODER_STEPS_PER_REVOLUTION 300
 
 
-#define MOTOR1_ENCODER_INPUT_PIN 41
-#define MOTOR1_ENCODER_B_PIN 42
+#define MOTOR1_ENCODER_INPUT_PIN 42
+#define MOTOR1_ENCODER_B_PIN 41
 #define MOTOR1_DIRECTION_PIN 40
 #define MOTOR1_INVERSE_DIRECTION_PIN 39
 #define MOTOR1_PWM_PIN 38
@@ -124,8 +125,8 @@ Motor motor3 = {
     0  // pidOutput
 };
 
-#define MOTOR4_ENCODER_INPUT_PIN 10
-#define MOTOR4_ENCODER_B_PIN 11
+#define MOTOR4_ENCODER_INPUT_PIN 11
+#define MOTOR4_ENCODER_B_PIN 10
 #define MOTOR4_DIRECTION_PIN 12
 #define MOTOR4_INVERSE_DIRECTION_PIN 13
 #define MOTOR4_PWM_PIN 14
