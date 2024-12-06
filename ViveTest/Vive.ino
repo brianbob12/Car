@@ -75,12 +75,26 @@ void print_Vive_positions(){
   Serial.println();
 }
 
+void compute_car_position(){
+  //the car position is the average of the two vives
+  car_position_x = (vive_1_x + vive_2_x) / 2;
+  car_position_y = (vive_1_y + vive_2_y) / 2;
+
+  //the car angle is the angle between the two vives
+  //plus the offset
+  float raw_angle_rad = atan2(vive_2_y - vive_1_y, vive_2_x - vive_1_x);
+  float raw_angle_deg = raw_angle_rad * 180 / PI;
+  car_angle = raw_angle_deg + VIVE_ANGLE_OFFSET;
+}
+
 int lastReadMilis = 0
 
 void loop_Vive() {
   int currentMillis = millis();
   if (currentMillis - lastReadMilis >= READ_PERIOD_MILIS) {
     read_Vive();
+    compute_car_position();
+
     lastReadMilis = currentMillis;
 
     print_Vive_positions();
