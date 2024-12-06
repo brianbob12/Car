@@ -46,114 +46,111 @@ void setMotorTargetFrequency(Motor &motor, float frequency);
 #define ENCODER_STEPS_PER_REVOLUTION 300
 
 //PID Constants
-#define KP 0.3
-#define KI 0.03
-#define KD 0.05
+#define KP 0.6
+#define KI 0.06
+#define KD 0.1
 
 
-#define MOTOR1_ENCODER_INPUT_PIN 42
-#define MOTOR1_ENCODER_B_PIN 41
+#define MOTOR1_ENCODER_INPUT_PIN 41
 #define MOTOR1_DIRECTION_PIN 39
 #define MOTOR1_INVERSE_DIRECTION_PIN 40
 #define MOTOR1_PWM_PIN 38
 
+
 // Define motor1 as a struct instance
 Motor motor1 = {
-    MOTOR1_ENCODER_INPUT_PIN,
-    MOTOR1_DIRECTION_PIN,
-    MOTOR1_INVERSE_DIRECTION_PIN,
-    MOTOR1_PWM_PIN,
-    0, // lastEncoderTime
-    0, // lastEncoderMillis
-    HIGH, // lastEncoderState
-    0, // frequency
-    0, // frequencySmooth
-    true, // direction
-    1, // targetFrequency
-    0, // encoderRunningCount
-    0, // encoderRunningCountStartMillis
-    0, // lastError
-    0, // integral
-    0, // lastPIDTime
-    0  // pidOutput
+    .encoderPin = MOTOR1_ENCODER_INPUT_PIN,
+    .directionPin = MOTOR1_DIRECTION_PIN,
+    .inverseDirectionPin = MOTOR1_INVERSE_DIRECTION_PIN,
+    .pwmPin = MOTOR1_PWM_PIN,
+    .lastEncoderTime = 0,
+    .lastEncoderMillis = 0,
+    .lastEncoderState = HIGH,
+    .frequency = 0,
+    .frequencySmooth = 0,
+    .direction = true,
+    .targetFrequency = 1,
+    .encoderRunningCount = 0,
+    .encoderRunningCountStartMillis = 0,
+    .lastError = 0,
+    .integral = 0,
+    .lastPIDTime = 0,
+    .pidOutput = 0
 };
 
-#define MOTOR2_ENCODER_INPUT_PIN 37
-#define MOTOR2_ENCODER_B_PIN 36
+#define MOTOR2_ENCODER_INPUT_PIN 36
 #define MOTOR2_DIRECTION_PIN 35
 #define MOTOR2_INVERSE_DIRECTION_PIN 34
 #define MOTOR2_PWM_PIN 33
 
 Motor motor2 = {
-    MOTOR2_ENCODER_INPUT_PIN,
-    MOTOR2_DIRECTION_PIN,
-    MOTOR2_INVERSE_DIRECTION_PIN,
-    MOTOR2_PWM_PIN,
-    0, // lastEncoderTime
-    0, // lastEncoderMillis
-    HIGH, // lastEncoderState
-    0, // frequency
-    0, // frequencySmooth
-    true, // direction
-    1, // targetFrequency
-    0, // encoderRunningCount
-    0, // encoderRunningCountStartMillis
-    0, // lastError
-    0, // integral
-    0, // lastPIDTime
-    0  // pidOutput
+    .encoderPin = MOTOR2_ENCODER_INPUT_PIN,
+    .directionPin = MOTOR2_DIRECTION_PIN,
+    .inverseDirectionPin = MOTOR2_INVERSE_DIRECTION_PIN,
+    .pwmPin = MOTOR2_PWM_PIN,
+    .lastEncoderTime = 0,
+    .lastEncoderMillis = 0,
+    .lastEncoderState = HIGH,
+    .frequency = 0,
+    .frequencySmooth = 0,
+    .direction = true,
+    .targetFrequency = 1,
+    .encoderRunningCount = 0,
+    .encoderRunningCountStartMillis = 0,
+    .lastError = 0,
+    .integral = 0,
+    .lastPIDTime = 0,
+    .pidOutput = 0
 };
 
-#define MOTOR3_ENCODER_INPUT_PIN 16
-#define MOTOR3_ENCODER_B_PIN 17
+#define MOTOR3_ENCODER_INPUT_PIN 17
 #define MOTOR3_DIRECTION_PIN 8
 #define MOTOR3_INVERSE_DIRECTION_PIN 3
 #define MOTOR3_PWM_PIN 9
 
 Motor motor3 = {
-    MOTOR3_ENCODER_INPUT_PIN,
-    MOTOR3_DIRECTION_PIN,
-    MOTOR3_INVERSE_DIRECTION_PIN,
-    MOTOR3_PWM_PIN,
-    0, // lastEncoderTime
-    0, // lastEncoderMillis
-    HIGH, // lastEncoderState
-    0, // frequency
-    0, // frequencySmooth
-    true, // direction
-    1, // targetFrequency
-    0, // encoderRunningCount
-    0, // encoderRunningCountStartMillis
-    0, // lastError
-    0, // integral
-    0, // lastPIDTime
-    0  // pidOutput
+    .encoderPin = MOTOR3_ENCODER_INPUT_PIN,
+    .directionPin = MOTOR3_DIRECTION_PIN,
+    .inverseDirectionPin = MOTOR3_INVERSE_DIRECTION_PIN,
+    .pwmPin = MOTOR3_PWM_PIN,
+    .lastEncoderTime = 0,
+    .lastEncoderMillis = 0,
+    .lastEncoderState = HIGH,
+    .frequency = 0,
+    .frequencySmooth = 0,
+    .direction = true,
+    .targetFrequency = 1,
+    .encoderRunningCount = 0,
+    .encoderRunningCountStartMillis = 0,
+    .lastError = 0,
+    .integral = 0,
+    .lastPIDTime = 0,
+    .pidOutput = 0
 };
 
-#define MOTOR4_ENCODER_INPUT_PIN 11
-#define MOTOR4_ENCODER_B_PIN 10
-#define MOTOR4_DIRECTION_PIN 13
-#define MOTOR4_INVERSE_DIRECTION_PIN 12
+#define MOTOR4_ENCODER_INPUT_PIN 10
+#define MOTOR4_DIRECTION_PIN 12
+#define MOTOR4_INVERSE_DIRECTION_PIN 13
 #define MOTOR4_PWM_PIN 14
 
 Motor motor4 = {
-    MOTOR4_ENCODER_INPUT_PIN,
-    MOTOR4_DIRECTION_PIN,
-    MOTOR4_INVERSE_DIRECTION_PIN,
-    MOTOR4_PWM_PIN,
-    0, // lastEncoderTime
-    0, // lastEncoderMillis
-    HIGH, // lastEncoderState
-    0, // frequency
-    0, // frequencySmooth
-    true, // direction
-    1, // targetFrequency
-    0, // encoderRunningCount
-    0, // encoderRunningCountStartMillis
-    0, // lastError
-    0, // integral
-    0, // lastPIDTime
-    0  // pidOutput
+    .encoderPin = MOTOR4_ENCODER_INPUT_PIN,
+    .directionPin = MOTOR4_DIRECTION_PIN,
+    .inverseDirectionPin = MOTOR4_INVERSE_DIRECTION_PIN,
+    .pwmPin = MOTOR4_PWM_PIN,
+    .lastEncoderTime = 0,
+    .lastEncoderMillis = 0,
+    .lastEncoderState = HIGH,
+    .frequency = 0,
+    .frequencySmooth = 0,
+    .direction = true,
+    .targetFrequency = 1,
+    .encoderRunningCount = 0,
+    .encoderRunningCountStartMillis = 0,
+    .lastError = 0,
+    .integral = 0,
+    .lastPIDTime = 0,
+    .pidOutput = 0
 };
 
 
