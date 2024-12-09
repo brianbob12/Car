@@ -7,7 +7,7 @@ void setup(){
   setup_PID();
   setup_Actions();
 
-  addAction(forward_one_cell);
+  addAction(veer_left_strong);
 }
 
 void loop(){

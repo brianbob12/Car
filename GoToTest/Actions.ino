@@ -1,6 +1,7 @@
 #include "Actions.h"
 
 #include "PID.h"
+#include "Vive.h"
 
 ActionQueue action_queue;
 
@@ -56,6 +57,18 @@ Action popAction(){
 }
 
 void setMotorSpeeds(Action &action){
+  if(isGotoAction(action)){
+    setMotorSpeedsGotoAction(action);
+  }
+  else if(isTurnToAction(action)){
+    setMotorSpeedsTurnToAction(action);
+  }
+  else{
+    setMotorSpeedsNormalAction(action);
+  }
+}
+
+void setMotorSpeedsNormalAction(Action &action){
   setMotorTargetFrequency(motor1, action.motor1_speed);
   setMotorDirection(motor1, action.motor1_direction);
 
@@ -90,6 +103,26 @@ void startAction(Action &action){
   setMotorSpeeds(action);
 }
 
+bool isGotoAction(Action &action){
+  return strncmp(action.name, "GOTO", 4) == 0;
+}
+
+bool isTurnToAction(Action &action){
+  return strncmp(action.name, "TURNTO", 5) == 0;
+}
+
+bool isActionDone(Action &action){
+  if(isGotoAction(action)){
+    return isGotoActionDone(action);
+  }
+  else if(isTurnToAction(action)){
+    return isTurnToActionDone(action);
+  }
+  int current_time = millis();
+  int time_since_action_start = current_time - current_action_start_time;
+  return time_since_action_start >= action.duration;
+}
+
 void setDefaultMotorSpeeds(Action &action){
   default_action = action;
 }
@@ -109,9 +142,7 @@ void loop_Actions(){
     return;
   }
 
-  int current_time = millis();
-  int time_since_action_start = current_time - current_action_start_time;
-  if(time_since_action_start >= current_action.duration){
+  if(isActionDone(current_action)){
     if(action_queue.num_actions == 0){
       has_current_action = false;
       setMotorSpeeds(default_action);
@@ -120,5 +151,10 @@ void loop_Actions(){
     Action next_action = popAction();
     startAction(next_action);
     return;
+  }
+  else{
+    //it's important to do this multiple times for
+    //special actions
+    setMotorSpeeds(current_action);
   }
 }

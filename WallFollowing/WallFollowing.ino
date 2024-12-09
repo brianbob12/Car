@@ -8,6 +8,10 @@ void setup(){
   setup_PID();
   setup_Actions();
   setup_IRSensors();
+
+  setDefaultMotorSpeeds(veer_left_light);
+
+  Serial.println("Setup complete");
 }
 
 void loop(){
@@ -18,15 +22,15 @@ void loop(){
   if(!hasCurrentAction()){
     if(readIRSensor3()){
       Serial.println("Veering right");
-      addAction(veer_right);
-      addAction(veer_left);
+      addAction(veer_right_strong);
+      //addAction(veer_left);
       return;
     }
-    if(readIRSensor4()){
-      Serial.println("Veering left");
-      addAction(veer_left);
-      addAction(veer_right);
-      return;
-    }
+    // if(readIRSensor4()){
+    //   Serial.println("Veering left");
+    //   addAction(veer_left_strong);
+    //   addAction(veer_right);
+    //   return;
+    // }
   }
 }

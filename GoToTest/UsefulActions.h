@@ -3,6 +3,27 @@
 
 #include "Actions.h"
 
+#define GOTO_TOLERANCE 10
+
+/**
+ * Creates an action to move to a specific point
+ * @param x the x coordinate to move to
+ * @param y the y coordinate to move to
+ * @param speed the speed to move at
+ * @return the action to move to the point
+ */
+Action GOTO(float x, float y, float speed);
+
+#define TURNTO_TOLERANCE 10
+
+/**
+ * Creates an action to turn to a specific angle
+ * @param angle the angle to turn to
+ * @param speed the speed to turn at
+ * @return the action to turn to the angle
+ */
+Action TURNTO(float angle, float speed);
+
 Action forward_one_cell {
   .name = "Forward One Cell",
   .motor1_speed = 1.5,

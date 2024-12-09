@@ -6,5 +6,5 @@ void setup() {
 }
 
 void loop() {
-  read_Vive();
+  loop_Vive();
 }
