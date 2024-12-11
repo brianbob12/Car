@@ -4,19 +4,7 @@
 
 #include "PID.h"
 
-#include "Defaults.h"
 
-#include "IRSensors.h"
-
-bool obsticle_avoidance_enabled = true;
-
-void enableObsticleAvoidance(){
-  obsticle_avoidance_enabled = true;
-}
-
-void disableObsticleAvoidance(){
-  obsticle_avoidance_enabled = false;
-}
 
 void turnInPlaceLeft(float speed){
   setMotorTargetFrequency(motor1, speed);
@@ -46,73 +34,11 @@ void turnInPlaceRight(float speed){
   setMotorDirection(motor4, true);
 }
 
-void veerLeftStrongBack(){
-  setMotorTargetFrequency(motor1, 0.5);
-  setMotorDirection(motor1, false);
-  setMotorTargetFrequency(motor2, 0.5);
-  setMotorDirection(motor2, false);
-  setMotorTargetFrequency(motor3, 1.7);
-  setMotorDirection(motor3, false);
-  setMotorTargetFrequency(motor4, 1.7);
-  setMotorDirection(motor4, false);
-}
+#define GOTO_ANGLE_TOLERANCE 10
 
-void veerRightStrongBack(){
-  setMotorTargetFrequency(motor1, 1.7);
-  setMotorDirection(motor1, false);
-  setMotorTargetFrequency(motor2, 1.7);
-  setMotorDirection(motor2, false);
-  setMotorTargetFrequency(motor3, 0.5);
-  setMotorDirection(motor3, false);
-  setMotorTargetFrequency(motor4, 0.5);
-  setMotorDirection(motor4, false);
-}
-
-int lastLeftHit = 0;
-int lastRightHit = 0;
-
-/**
- * This handles object avoidance for the goto action
- * 
- * It checks for obsticles and veers away from them
- * 
- * If no obsticles are detected, it will do nothing
- * 
- * Returns true if this function set the motor speeds
- * Returns false if the function did not set the motor speeds
- */
-bool setMotorSpeedsGotoHandleObsticles(){
-  if(!obsticle_avoidance_enabled){
-    return;
-  }
-  if(readIRSensor5()){
-    veerLeftStrongBack();
-    lastLeftHit = millis();
-    return true;
-  }
-  if(readIRSensor6()){
-    veerRightStrongBack();
-    lastRightHit = millis();
-    return true;
-  }
-  int timeSinceLastHit = millis() - lastLeftHit;
-  if(timeSinceLastHit < GOTO_OBSTACLE_COOLDOWN){
-    veerLeftStrongBack();
-    return true;
-  }
-  timeSinceLastHit = millis() - lastRightHit;
-  if(timeSinceLastHit < GOTO_OBSTACLE_COOLDOWN){
-    veerRightStrongBack();
-    return true;
-  }
-  return false;
-}
+#define GOTO_TURN_SPEED 1.5
 
 void setMotorSpeedsGotoAction(Action &action){
-  if(setMotorSpeedsGotoHandleObsticles()){
-    return;
-  }
-
   float target_x = action.motor1_speed;
   float target_y = action.motor2_speed;
   float target_speed = action.motor3_speed;

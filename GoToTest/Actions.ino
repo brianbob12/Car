@@ -3,6 +3,8 @@
 #include "PID.h"
 #include "Vive.h"
 
+#include <string.h>
+
 ActionQueue action_queue;
 
 Action current_action;
@@ -28,9 +30,10 @@ bool hasCurrentAction(){
   return has_current_action;
 }
 
-void addAction(Action &action){
+void addAction(Action action){
   if(action_queue.num_actions < MAX_ACTIONS){
     action_queue.actions[action_queue.num_actions] = action;
+    Serial.printf("Added action: %s\n", action.name);
     action_queue.num_actions++;
   }
   else{
@@ -86,6 +89,7 @@ void startAction(Action &action){
   Serial.printf("Starting action: %s\n", action.name);
 
   // Make a local copy by explicitly copying each field
+  strcpy(current_action.name, action.name);  // Using strcpy for string copy
   current_action.motor1_speed = action.motor1_speed;
   current_action.motor1_direction = action.motor1_direction;
   current_action.motor2_speed = action.motor2_speed;
@@ -129,6 +133,12 @@ void setDefaultMotorSpeeds(Action &action){
 
 void setup_Actions(){
   action_queue.num_actions = 0;  // Initialize the queue
+}
+
+void abortCurrentAction(){
+  has_current_action = false;
+  action_queue.num_actions = 0;
+  setMotorSpeeds(default_action);
 }
 
 void loop_Actions(){

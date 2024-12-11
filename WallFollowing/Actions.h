@@ -1,8 +1,9 @@
 #ifndef ACTIONS_H
 #define ACTIONS_H
 
-/*
-An action is a set of motor speeds and how long to maintain them
+/**
+ * An action is a set of motor speeds and how long to maintain them
+ * If an action name starts with "GOTO" or "TURNTO" it is treated differently.
 */
 struct Action{
   char name[40];
@@ -24,6 +25,29 @@ struct Action{
 
 };
 
+/*
+Special actions
+
+  Special actions are actions have a more complex implementation.
+  They are identified by the name
+
+  "GOTO":
+    Moves the car to a specific point
+    motor_1_speed = x
+    motor_2_speed = y
+    motor_3_speed = speed
+    motor_4_speed = position tolerance
+
+    All other parameters are ignored
+
+  "TURNTO":
+    Turns the car to a specific angle
+    motor_1_speed = angle
+    motor_2_speed = speed
+    motor_3_speed = angle tolerance
+    All other parameters are ignored
+*/
+
 #define MAX_ACTIONS 20
 
 /*
@@ -38,6 +62,13 @@ struct ActionQueue{
 void addAction(Action &action);
 
 void setDefaultMotorSpeeds(Action &action);
+
+/**
+Aborts the current action and clears the action queue
+*/
+void abortCurrentAction();
+
+
 
 bool hasCurrentAction();
 

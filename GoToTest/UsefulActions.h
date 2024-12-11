@@ -3,7 +3,6 @@
 
 #include "Actions.h"
 
-#define GOTO_TOLERANCE 10
 
 /**
  * Creates an action to move to a specific point
@@ -13,8 +12,6 @@
  * @return the action to move to the point
  */
 Action GOTO(float x, float y, float speed);
-
-#define TURNTO_TOLERANCE 10
 
 /**
  * Creates an action to turn to a specific angle
@@ -203,6 +200,32 @@ Action turn_left_90_degrees {
   .motor3_direction = true,
   .motor4_speed = 1,
   .motor4_direction = true,
+  .duration = 1000 //1 second
+};
+
+Action veer_left_strong_back {
+  .name = "Veer left strong back",
+  .motor1_speed = 0.8,
+  .motor1_direction = false,
+  .motor2_speed = 0.8,
+  .motor2_direction = false,
+  .motor3_speed = 1.7,
+  .motor3_direction = false,
+  .motor4_speed = 1.7,
+  .motor4_direction = false,
+  .duration = 1000 //1 second
+};
+
+Action veer_right_strong_back {
+  .name = "Veer right strong back",
+  .motor1_speed = 1.7,
+  .motor1_direction = false,
+  .motor2_speed = 1.7,
+  .motor2_direction = false,
+  .motor3_speed = 0.8,
+  .motor3_direction = false,
+  .motor4_speed = 0.8,
+  .motor4_direction = false,
   .duration = 1000 //1 second
 };
 

@@ -1,6 +1,9 @@
 #include "Actions.h"
 
 #include "PID.h"
+#include "Vive.h"
+
+#include <string.h>
 
 ActionQueue action_queue;
 
@@ -30,6 +33,7 @@ bool hasCurrentAction(){
 void addAction(Action &action){
   if(action_queue.num_actions < MAX_ACTIONS){
     action_queue.actions[action_queue.num_actions] = action;
+    Serial.printf("Added action: %s\n", action.name);
     action_queue.num_actions++;
   }
   else{
@@ -56,6 +60,18 @@ Action popAction(){
 }
 
 void setMotorSpeeds(Action &action){
+  if(isGotoAction(action)){
+    setMotorSpeedsGotoAction(action);
+  }
+  else if(isTurnToAction(action)){
+    setMotorSpeedsTurnToAction(action);
+  }
+  else{
+    setMotorSpeedsNormalAction(action);
+  }
+}
+
+void setMotorSpeedsNormalAction(Action &action){
   setMotorTargetFrequency(motor1, action.motor1_speed);
   setMotorDirection(motor1, action.motor1_direction);
 
@@ -73,6 +89,7 @@ void startAction(Action &action){
   Serial.printf("Starting action: %s\n", action.name);
 
   // Make a local copy by explicitly copying each field
+  strcpy(current_action.name, action.name);  // Using strcpy for string copy
   current_action.motor1_speed = action.motor1_speed;
   current_action.motor1_direction = action.motor1_direction;
   current_action.motor2_speed = action.motor2_speed;
@@ -90,8 +107,34 @@ void startAction(Action &action){
   setMotorSpeeds(action);
 }
 
+bool isGotoAction(Action &action){
+  return strncmp(action.name, "GOTO", 4) == 0;
+}
+
+bool isTurnToAction(Action &action){
+  return strncmp(action.name, "TURNTO", 5) == 0;
+}
+
+bool isActionDone(Action &action){
+  if(isGotoAction(action)){
+    return isGotoActionDone(action);
+  }
+  else if(isTurnToAction(action)){
+    return isTurnToActionDone(action);
+  }
+  int current_time = millis();
+  int time_since_action_start = current_time - current_action_start_time;
+  return time_since_action_start >= action.duration;
+}
+
 void setDefaultMotorSpeeds(Action &action){
   default_action = action;
+}
+
+void abortCurrentAction(){
+  has_current_action = false;
+  action_queue.num_actions = 0;
+  setMotorSpeeds(default_action);
 }
 
 void setup_Actions(){
@@ -109,9 +152,7 @@ void loop_Actions(){
     return;
   }
 
-  int current_time = millis();
-  int time_since_action_start = current_time - current_action_start_time;
-  if(time_since_action_start >= current_action.duration){
+  if(isActionDone(current_action)){
     if(action_queue.num_actions == 0){
       has_current_action = false;
       setMotorSpeeds(default_action);
@@ -120,5 +161,10 @@ void loop_Actions(){
     Action next_action = popAction();
     startAction(next_action);
     return;
+  }
+  else{
+    //it's important to do this multiple times for
+    //special actions
+    setMotorSpeeds(current_action);
   }
 }

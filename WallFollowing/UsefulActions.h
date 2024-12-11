@@ -3,6 +3,27 @@
 
 #include "Actions.h"
 
+#define GOTO_TOLERANCE 10
+
+/**
+ * Creates an action to move to a specific point
+ * @param x the x coordinate to move to
+ * @param y the y coordinate to move to
+ * @param speed the speed to move at
+ * @return the action to move to the point
+ */
+Action GOTO(float x, float y, float speed);
+
+#define TURNTO_TOLERANCE 10
+
+/**
+ * Creates an action to turn to a specific angle
+ * @param angle the angle to turn to
+ * @param speed the speed to turn at
+ * @return the action to turn to the angle
+ */
+Action TURNTO(float angle, float speed);
+
 Action forward_one_cell {
   .name = "Forward One Cell",
   .motor1_speed = 1.5,
@@ -77,7 +98,7 @@ Action veer_left_strong {
   .motor3_direction = true,
   .motor4_speed = 0.8,
   .motor4_direction = true,
-  .duration = 1400 //1.4 seconds
+  .duration = 1000 //1 seconds
 };
 
 /*
@@ -94,7 +115,7 @@ Action veer_right_strong {
   .motor3_direction = true,
   .motor4_speed = 1.7,
   .motor4_direction = true,
-  .duration = 1400 //1.4 seconds
+  .duration = 1000 //1 seconds
 };
 
 /*
@@ -161,28 +182,28 @@ Action turn_right_30_degrees {
 
 Action turn_right_90_degrees {
   .name = "Turn Right 90 Degrees",
-  .motor1_speed = 1,
+  .motor1_speed = 1.5,
   .motor1_direction = false,
-  .motor2_speed = 1,
+  .motor2_speed = 1.5,
   .motor2_direction = false,
-  .motor3_speed = 1,
-  .motor3_direction = false,
-  .motor4_speed = 1,
-  .motor4_direction = false,
-  .duration = 1000 //1 second
+  .motor3_speed = 1.5,
+  .motor3_direction = true,
+  .motor4_speed = 1.5,
+  .motor4_direction = true,
+  .duration = 1500 //1.5 seconds
 };
 
 Action turn_left_90_degrees {
   .name = "Turn Left 90 Degrees",
-  .motor1_speed = 1,
+  .motor1_speed = 1.5,
   .motor1_direction = true,
-  .motor2_speed = 1,
+  .motor2_speed = 1.5,
   .motor2_direction = true,
-  .motor3_speed = 1,
-  .motor3_direction = true,
-  .motor4_speed = 1,
-  .motor4_direction = true,
-  .duration = 1000 //1 second
+  .motor3_speed = 1.5,
+  .motor3_direction = false,
+  .motor4_speed = 1.5,
+  .motor4_direction = false,
+  .duration = 1500 //1.5 seconds
 };
 
 #endif

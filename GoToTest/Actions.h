@@ -65,6 +65,11 @@ void setDefaultMotorSpeeds(Action &action);
 
 bool hasCurrentAction();
 
+/**
+Aborts the current action and clears the action queue
+*/
+void abortCurrentAction();
+
 void setup_Actions();
 void loop_Actions();
 
