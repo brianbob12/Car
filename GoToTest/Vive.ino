@@ -75,6 +75,17 @@ void print_Vive_positions(){
   Serial.println();
 }
 
+float main_angle_offset = 70.0; //from calibration data
+float secondary_angle_offset = 5; //from calibration data
+
+void setMainAngleOffset(float offset){
+  main_angle_offset = offset;
+}
+
+void setSecondaryAngleOffset(float offset){
+  secondary_angle_offset = offset;
+}
+
 /**
  * Compute the angle offset from the calibration data
  * uses the car_position_x and car_position_y to find the angle offset
@@ -83,29 +94,35 @@ float get_angle_offset(){
   //from calibration data
   int xDistFromCenter = abs(car_position_x - 4000);
 
-  float offset = 155.0; //offset at center of the map
+  float offset = main_angle_offset; //offset at center of the map
 
   offset -= xDistFromCenter * 20/2000;
 
   //? add an extra 5 degrees if the car is on the ramp
   if (car_position_y < 3500){
-    offset += 5;
+    offset += secondary_angle_offset;
   }
 
   return offset;
 }
 
-#define ANGLE_POLL_SIZE 5 //should be odd
-//the effective angle is the median of the last ANGLE_POLL_SIZE readings
-int angle_poll[ANGLE_POLL_SIZE];
+#define POLL_SIZE 7 //should be odd
+//the effective angle is the median of the last POLL_SIZE readings
+int angle_poll[POLL_SIZE];
 int angle_poll_index = 0;
 
-float get_median_angle(){
+int x_poll[POLL_SIZE];
+int x_poll_index = 0;
+
+int y_poll[POLL_SIZE];
+int y_poll_index = 0;
+
+float get_median(int pollSizeArray[]){
   //sort the array into a new array
-  int sorted_angle_poll[ANGLE_POLL_SIZE];
-  memcpy(sorted_angle_poll, angle_poll, ANGLE_POLL_SIZE * sizeof(int));
-  for(int i = 0; i < ANGLE_POLL_SIZE; i++){
-    for(int j = i + 1; j < ANGLE_POLL_SIZE; j++){
+  int sorted_angle_poll[POLL_SIZE];
+  memcpy(sorted_angle_poll, pollSizeArray, POLL_SIZE * sizeof(int));
+  for(int i = 0; i < POLL_SIZE; i++){
+    for(int j = i + 1; j < POLL_SIZE; j++){
       if(sorted_angle_poll[i] > sorted_angle_poll[j]){
         int temp = sorted_angle_poll[i];
         sorted_angle_poll[i] = sorted_angle_poll[j];
@@ -113,13 +130,28 @@ float get_median_angle(){
       }
     }
   }
-  return sorted_angle_poll[ANGLE_POLL_SIZE / 2];
+  return sorted_angle_poll[POLL_SIZE / 2];
 }
 
 void compute_car_position(){
   //the car position is the average of the two vives
-  car_position_x = (vive_1_x + vive_2_x) / 2;
-  car_position_y = (vive_1_y + vive_2_y) / 2;
+  int car_position_x_reading = (vive_1_x + vive_2_x) / 2;
+  int car_position_y_reading = (vive_1_y + vive_2_y) / 2;
+
+  x_poll[x_poll_index] = car_position_x_reading;
+  x_poll_index++;
+  if(x_poll_index >= POLL_SIZE){
+    x_poll_index = 0;
+  }
+
+  y_poll[y_poll_index] = car_position_y_reading;
+  y_poll_index++;
+  if(y_poll_index >= POLL_SIZE){
+    y_poll_index = 0;
+  }
+
+  car_position_x = get_median(x_poll);
+  car_position_y = get_median(y_poll);
 
   //the car angle is the angle between the two vives
   //plus the offset
@@ -136,11 +168,11 @@ void compute_car_position(){
 
   angle_poll[angle_poll_index] = angle_reading;
   angle_poll_index++;
-  if(angle_poll_index >= ANGLE_POLL_SIZE){
+  if(angle_poll_index >= POLL_SIZE){
     angle_poll_index = 0;
   }
 
-  car_angle = get_median_angle();
+  car_angle = get_median(angle_poll);
 }
 
 void print_car_position(){

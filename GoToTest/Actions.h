@@ -48,7 +48,7 @@ Special actions
     All other parameters are ignored
 */
 
-#define MAX_ACTIONS 20
+#define MAX_ACTIONS 40
 
 /*
 An action queue is a list of actions to be executed.
@@ -59,7 +59,7 @@ struct ActionQueue{
   int num_actions;
 };
 
-void addAction(Action &action);
+void addAction(Action action);
 
 void setDefaultMotorSpeeds(Action &action);
 

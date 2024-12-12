@@ -83,7 +83,7 @@ int lastRightHit = 0;
  */
 bool setMotorSpeedsGotoHandleObsticles(){
   if(!obsticle_avoidance_enabled){
-    return;
+    return false;
   }
   if(readIRSensor5()){
     veerLeftStrongBack();
@@ -118,11 +118,13 @@ void setMotorSpeedsGotoAction(Action &action){
   float target_speed = action.motor3_speed;
   float tolerance = action.motor4_speed;
 
-  //find the angle between the car and the target
-  float angle = atan2(action.motor1_speed - car_position_x, -action.motor2_speed + car_position_y);
-  //convert to degrees
+  // Calculate angle using new convention:
+  // atan2(y,x) gives angle from positive x-axis
+  // Negate y since positive y is down in the new convention
+  float angle = atan2(target_y - car_position_y, target_x - car_position_x);
+  // Convert to degrees
   angle = angle * 180 / PI;
-  //convert to the range of 0 to 360
+  // Convert to 0-360 range
   if(angle < 0){
     angle += 360;
   }

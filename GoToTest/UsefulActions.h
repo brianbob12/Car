@@ -47,6 +47,32 @@ Action backward_one_cell {
   .duration = 1400 //1.4 seconds
 };
 
+Action inch_forward {
+  .name = "Inch Forward",
+  .motor1_speed = 1.5,
+  .motor1_direction = true,
+  .motor2_speed = 1.5,
+  .motor2_direction = true,
+  .motor3_speed = 1.5,
+  .motor3_direction = true,
+  .motor4_speed = 1.5,
+  .motor4_direction = true,
+  .duration = 300 //0.3 seconds
+};
+
+Action inch_backward {
+  .name = "Inch Backward",
+  .motor1_speed = 1.5,
+  .motor1_direction = false,
+  .motor2_speed = 1.5,
+  .motor2_direction = false,
+  .motor3_speed = 1.5,
+  .motor3_direction = false,
+  .motor4_speed = 1.5,
+  .motor4_direction = false,
+  .duration = 300 //0.3 seconds
+};
+
 /*
 Veers left while moving forward
 Shifts about 15 degrees left

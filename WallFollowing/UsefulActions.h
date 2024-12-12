@@ -190,7 +190,7 @@ Action turn_right_90_degrees {
   .motor3_direction = true,
   .motor4_speed = 1.5,
   .motor4_direction = true,
-  .duration = 1500 //1.5 seconds
+  .duration = 1200 //1.2 seconds
 };
 
 Action turn_left_90_degrees {
@@ -203,7 +203,7 @@ Action turn_left_90_degrees {
   .motor3_direction = false,
   .motor4_speed = 1.5,
   .motor4_direction = false,
-  .duration = 1500 //1.5 seconds
+  .duration = 1200 //1.2 seconds
 };
 
 #endif
