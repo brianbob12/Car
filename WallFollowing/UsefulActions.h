@@ -47,7 +47,7 @@ Action backward_one_cell {
   .motor3_direction = false,
   .motor4_speed = 1.5,
   .motor4_direction = false,
-  .duration = 1400 //1.4 seconds
+  .duration = 800 //1.4 seconds
 };
 
 /*
@@ -90,15 +90,15 @@ Shifts about 30 degrees left
 */
 Action veer_left_strong {
   .name = "Veer Left Strong",
-  .motor1_speed = 1.7,
+  .motor1_speed = 1.5,
   .motor1_direction = true,
-  .motor2_speed = 1.7,
+  .motor2_speed = 1.5,
   .motor2_direction = true,
-  .motor3_speed = 0.8,
+  .motor3_speed = 0.7,
   .motor3_direction = true,
-  .motor4_speed = 0.8,
+  .motor4_speed = 0.7,
   .motor4_direction = true,
-  .duration = 1000 //1 seconds
+  .duration = 10 //1 seconds
 };
 
 /*
@@ -107,15 +107,15 @@ Shifts about 30 degrees right
 */
 Action veer_right_strong {
   .name = "Veer Right Strong",
-  .motor1_speed = 0.8,
+  .motor1_speed = 0.7,
   .motor1_direction = true,
-  .motor2_speed = 0.8,
+  .motor2_speed = 0.7,
   .motor2_direction = true,
-  .motor3_speed = 1.7,
+  .motor3_speed = 1.4,
   .motor3_direction = true,
-  .motor4_speed = 1.7,
+  .motor4_speed = 1.4,
   .motor4_direction = true,
-  .duration = 1000 //1 seconds
+  .duration = 10 //1 seconds
 };
 
 /*
@@ -190,7 +190,7 @@ Action turn_right_90_degrees {
   .motor3_direction = true,
   .motor4_speed = 1.5,
   .motor4_direction = true,
-  .duration = 1200 //1.2 seconds
+  .duration = 1300 //1.2 seconds
 };
 
 Action turn_left_90_degrees {
@@ -204,6 +204,19 @@ Action turn_left_90_degrees {
   .motor4_speed = 1.5,
   .motor4_direction = false,
   .duration = 1200 //1.2 seconds
+};
+
+Action turn_right_10_degrees {
+  .name = "Turn Right 90 Degrees",
+  .motor1_speed = 1.5,
+  .motor1_direction = false,
+  .motor2_speed = 1.5,
+  .motor2_direction = false,
+  .motor3_speed = 1.5,
+  .motor3_direction = true,
+  .motor4_speed = 1.5,
+  .motor4_direction = true,
+  .duration = 500 //1.2 seconds
 };
 
 #endif

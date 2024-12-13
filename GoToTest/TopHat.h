@@ -3,6 +3,10 @@
 
 #define TOPHAT_TRANSMISSION_FREQUENCY 2 //Hz
 
+#define I2C_SLAVE_ADDR 0x28
+#define SDA_PIN 5
+#define SCL_PIN 4
+
 void setup_TopHat();
 void loop_TopHat();
 

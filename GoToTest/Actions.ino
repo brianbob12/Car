@@ -104,6 +104,10 @@ void startAction(Action &action){
   has_current_action = true;
 
   //set the motor speeds
+  resetPID(motor1);
+  resetPID(motor2);
+  resetPID(motor3);
+  resetPID(motor4);
   setMotorSpeeds(action);
 }
 

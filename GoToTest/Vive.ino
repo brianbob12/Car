@@ -4,7 +4,14 @@
 Vive510 vive1(VIVE_1_PIN);
 Vive510 vive2(VIVE_2_PIN);
 
-#define READ_PERIOD_MILIS 1000/READ_FREQUENCY
+int read_frequency = DEFAULT_READ_FREQUENCY;
+
+int read_period_milis = 1000 / read_frequency;
+
+void set_vive_read_frequency(int frequency){
+  read_frequency = frequency;
+  read_period_milis = 1000 / read_frequency;
+}
 
 void setup_Vive() {
   vive1.begin();
@@ -26,8 +33,12 @@ int vive_1_y = 0;
 
 int vive_2_x = 0;
 int vive_2_y = 0;
+
+int read_vive_count = 0;
                                
 void read_Vive() {  
+  read_vive_count++;
+  int startTime = micros();
   if (vive1.status() == VIVE_RECEIVING) {
     static uint16_t vive_1_x0, vive_1_y0, vive_1_oldx1, vive_1_oldx2, vive_1_oldy1, vive_1_oldy2;
     vive_1_oldx2 = vive_1_oldx1; vive_1_oldy2 = vive_1_oldy1;
@@ -63,6 +74,10 @@ void read_Vive() {
     vive_2_x=0;
     vive_2_y=0; 
     vive2.sync(5); 
+  }
+  if(read_vive_count % 20 == 0){
+    int endTime = micros();
+    Serial.printf("Read vive time: %d\n", endTime - startTime);
   }
 }
 
@@ -133,7 +148,11 @@ float get_median(int pollSizeArray[]){
   return sorted_angle_poll[POLL_SIZE / 2];
 }
 
+int compute_car_position_count = 0;
 void compute_car_position(){
+  int start_time = micros();
+
+  compute_car_position_count++;
   //the car position is the average of the two vives
   int car_position_x_reading = (vive_1_x + vive_2_x) / 2;
   int car_position_y_reading = (vive_1_y + vive_2_y) / 2;
@@ -150,11 +169,16 @@ void compute_car_position(){
     y_poll_index = 0;
   }
 
+  int median1Time = micros();
   car_position_x = get_median(x_poll);
+  median1Time = micros() - median1Time;
+  int median2Time = micros();
   car_position_y = get_median(y_poll);
+  median2Time = micros() - median2Time;
 
   //the car angle is the angle between the two vives
   //plus the offset
+  int angleTime = micros();
   float raw_angle_rad = atan2(vive_2_x - vive_1_x, -(vive_2_y - vive_1_y));
   float raw_angle_deg = raw_angle_rad * 180 / PI;
   float angle_reading = raw_angle_deg + get_angle_offset();
@@ -173,6 +197,7 @@ void compute_car_position(){
   }
 
   car_angle = get_median(angle_poll);
+
 }
 
 void print_car_position(){
@@ -185,16 +210,16 @@ int lastPrintMilis = 0;
 
 void loop_Vive() {
   int currentMillis = millis();
-  if (currentMillis - lastReadMilis >= READ_PERIOD_MILIS) {
+  if (currentMillis - lastReadMilis >= read_period_milis) {
     read_Vive();
     compute_car_position();
 
     lastReadMilis = currentMillis;
 
-    if(currentMillis - lastPrintMilis >= PRINT_PERIOD_MILIS){
-      print_Vive_positions();
-      print_car_position();
-      lastPrintMilis = currentMillis;
-    }
+    // if(currentMillis - lastPrintMilis >= PRINT_PERIOD_MILIS){
+    //   print_Vive_positions();
+    //   print_car_position();
+    //   lastPrintMilis = currentMillis;
+    // }
   }
 }

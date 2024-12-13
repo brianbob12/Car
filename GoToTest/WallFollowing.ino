@@ -3,17 +3,6 @@
 #include "PID.h"
 #include "IRSensors.h"
 
-void setup(){
-  Serial.begin(115200);
-  setup_PID();
-  setup_Actions();
-  setup_IRSensors();
-
-  setDefaultMotorSpeeds(veer_left_strong);
-
-  Serial.println("Setup complete");
-}
-
 #define FOLLOWING_NO_OBSTICLE 0
 #define FRONT_OBSTICLE 1
 #define LEFT_OBSTICLE 2
@@ -24,11 +13,28 @@ int lastChangeTime = 0;
 #define LEFT_TOO_LONG 7000
 #define NOTHING_TOO_LONG 10000
 
-void loop(){
-  loop_PID();
-  loop_Actions();
-  loop_IRSensors();
+bool is_wall_following_enabled = false;
 
+void enable_WallFollowing(){
+  set_vive_read_frequency(1);
+  is_wall_following_enabled = true;
+  setDefaultMotorSpeeds(veer_left_strong);
+  addAction(inch_forward);
+  Serial.println("Wall following enabled");
+}
+
+void disable_WallFollowing(){
+  if(!is_wall_following_enabled){
+    return;
+  }
+  is_wall_following_enabled = false;
+  setDefaultMotorSpeeds(go_nowhere);
+}
+
+void loop_WallFollowing(){
+  if(!is_wall_following_enabled){
+    return;
+  }
   if(!hasCurrentAction()){
     if(readIRSensor6()){
       if(lastReading != FRONT_OBSTICLE){
@@ -66,7 +72,7 @@ void loop(){
       Serial.println("No obsticle detected for too long");
       lastReading = FOLLOWING_NO_OBSTICLE;
       lastChangeTime = millis();
-      addAction(backward_one_cell);
+      addAction(backward_one_cell_short);
       addAction(turn_right_10_degrees);
       return;
     }

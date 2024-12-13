@@ -48,7 +48,7 @@ Special actions
     All other parameters are ignored
 */
 
-#define MAX_ACTIONS 40
+#define MAX_ACTIONS 50
 
 /*
 An action queue is a list of actions to be executed.

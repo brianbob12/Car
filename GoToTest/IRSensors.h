@@ -6,7 +6,7 @@
 #define IR_SENSOR_3_PIN 16 // front left pointing left
 #define IR_SENSOR_4_PIN 10 // back left pointing left
 #define IR_SENSOR_5_PIN 1 //front right pointing front
-#define IR_SENSOR_6_PIN 5 // front left pointing front
+#define IR_SENSOR_6_PIN 37 // front left pointing front
 
 bool readIRSensor1();
 bool readIRSensor2();

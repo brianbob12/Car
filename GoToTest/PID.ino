@@ -73,7 +73,7 @@ void readMotorEncoder(Motor &motor){
     }
     motor.lastEncoderMillis = currentMillis;
   }
-  else if(timePeriod > 1){
+  else if(timePeriod > 2){
     //if it hasn't moved in 1 second set the frequency to 0
     motor.frequency = 0;
     motor.frequencySmooth = SMOOTHING_FACTOR * motor.frequencySmooth + (1 - SMOOTHING_FACTOR) * motor.frequency;
@@ -89,8 +89,12 @@ float calculateMotorPID(Motor &motor) {
     motor.pidOutput = 0;
     return 0;
   }
+  //float frequencyToUse = readEncoderRunningCount(motor);
+  //clearEncoderRunningCount(motor);
+  float frequencyToUse = motor.frequencySmooth;
+
   //if the motor is not moving, set the pid output to 0
-  float error = motor.targetFrequency - motor.frequencySmooth;
+  float error = motor.targetFrequency - frequencyToUse;
   unsigned long currentTime = micros();
   float deltaTime = (currentTime - motor.lastPIDTime) / 1000000.0;// Convert to seconds
   
@@ -111,6 +115,13 @@ float calculateMotorPID(Motor &motor) {
   Serial.printf("No time passed\n");
   motor.pidOutput = 0;
   return 0;
+}
+
+void resetPID(Motor &motor){
+  motor.lastError = 0;
+  motor.integral = 0;
+  motor.lastPIDTime = micros();
+  motor.pidOutput = 0;
 }
 
 void setup_PID() {

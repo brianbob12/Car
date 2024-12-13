@@ -38,6 +38,8 @@ struct Motor {
 void setMotorDirection(Motor &motor, bool direction);
 void setMotorTargetFrequency(Motor &motor, float frequency);
 
+void resetPID(Motor &motor);
+
 #define SMOOTHING_FACTOR 0.2
 #define ENCODER_GUARD 0.00 //the ammount of time in seconds under which we ignore encoder signals
 //Through experimentation, this should be zero

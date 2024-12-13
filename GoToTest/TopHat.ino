@@ -1,8 +1,7 @@
 #include <Wire.h>
 
-#define I2C_SLAVE_ADDR 0x28
-#define SDA_PIN 5
-#define SCL_PIN 4
+
+
 int health = 100; // Default health value
 
 void send_I2C_byte(uint8_t data) {
@@ -12,7 +11,7 @@ void send_I2C_byte(uint8_t data) {
   uint8_t error = Wire.endTransmission();
 
   if (error == 0) {
-    Serial.println("Data sent successfully");
+    //Serial.println("Data sent successfully");
     rgbLedWrite(2, 0, 20, 0);  // green
   } else {
     Serial.printf("Error sending data: %d\n", error);
@@ -30,17 +29,16 @@ void receive_I2C_health() {
     Serial.println("Failed to receive health value");
   }
 
-  // Check if health is zero
-  if (health == 0) {
-    stopRobot();
-  }
+  
 }
 
+//stops the robot until the health is not 0
 void stopRobot() {
   Serial.println("Health is 0! Stopping all robot activities...");
   rgbLedWrite(2, 20, 0, 0);  // red LED to indicate stop
-  while (1) {
-    delay(1000); // Infinite loop to halt the robot
+  while (health == 0) {
+    delay(500); // Infinite loop to halt the robot
+    receive_I2C_health();
   }
 }
 
@@ -64,6 +62,10 @@ int time_of_last_transmission_millis = 0;
 void send_data_to_tophat() {
   send_I2C_byte(used_packets);
   receive_I2C_health();
+  // Check if health is zero
+  if (health == 0) {
+    stopRobot();
+  }
   used_packets = 0;
   time_of_last_transmission_millis = millis();
 }
