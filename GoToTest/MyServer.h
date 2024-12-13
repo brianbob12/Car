@@ -24,6 +24,9 @@
 #define SET_X_OFFSET 12
 #define SET_Y_OFFSET 13
 
+#define SET_SERVO_ENABLED_COMMAND_CODE 14
+#define SET_SERVO_PERIOD_COMMAND_CODE 15
+
 void setup_server(
   void (*onUpdate)(int command, float arg1, float arg2, float arg3)
 );

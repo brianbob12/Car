@@ -4,6 +4,14 @@
 
 int health = 100; // Default health value
 
+/**
+ * Get the health of the robot
+ * @return health: health of the robot
+ */
+int get_health(){
+  return health;
+}
+
 void send_I2C_byte(uint8_t data) {
   // Send data to slave
   Wire.beginTransmission(I2C_SLAVE_ADDR);

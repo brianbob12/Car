@@ -17,4 +17,10 @@ void loop_TopHat();
  */
 void on_used_packets(int packets);
 
+/**
+ * Get the health of the robot
+ * @return health: health of the robot
+ */
+int get_health();
+
 #endif

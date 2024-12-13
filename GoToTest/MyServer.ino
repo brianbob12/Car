@@ -15,6 +15,7 @@ const char body[] PROGMEM = R"===(
   <p>X: <span id="currentX">--</span></p>
   <p>Y: <span id="currentY">--</span></p>
   <p>Angle: <span id="currentAngle">--</span>°</p>
+  <p>Health: <span id="currentHealth">--</span></p>
 </div>
 
 <div id="controls">
@@ -66,6 +67,12 @@ const char body[] PROGMEM = R"===(
   <h3>Set Y Offset</h3>
   Y: <input type="number" id="setYOffset" value="0">
   <button onclick="setYOffset()">Set Y Offset</button>
+
+  <h3>Servo</h3>
+  <button onclick="setServoEnabled(1)">Enable</button>
+  <button onclick="setServoEnabled(0)">Disable</button>
+  <input type="number" id="setServoPeriod" value="500">
+  <button onclick="setServoPeriod()">Set Period</button>
 </div>
 
 <script>
@@ -135,6 +142,15 @@ const char body[] PROGMEM = R"===(
     fetch(`/update?cmd=13&offset=${offset}`);  // SET_Y_OFFSET_COMMAND_CODE
   }
 
+  function setServoEnabled(enabled) {
+    fetch(`/update?cmd=14&enabled=${enabled}`);  // SET_SERVO_ENABLED_COMMAND_CODE
+  }
+
+  function setServoPeriod() {
+    const period = document.getElementById('setServoPeriod').value;
+    fetch(`/update?cmd=15&period=${period}`);  // SET_SERVO_PERIOD_COMMAND_CODE
+  }
+
 
   // Add position update functionality
   async function updatePosition() {
@@ -144,6 +160,7 @@ const char body[] PROGMEM = R"===(
       document.getElementById('currentX').textContent = data.x;
       document.getElementById('currentY').textContent = data.y;
       document.getElementById('currentAngle').textContent = data.angle.toFixed(1);
+      document.getElementById('currentHealth').textContent = data.health;
     } catch (e) {
       console.error('Failed to update position:', e);
     }
@@ -181,7 +198,8 @@ void handleRequest(WiFiClient client, String requestLine){
     // Send position data as JSON
     String json = "{\"x\":" + String(car_position_x) + 
                  ",\"y\":" + String(car_position_y) + 
-                 ",\"angle\":" + String(car_angle) + "}";
+                 ",\"angle\":" + String(car_angle) + 
+                 ",\"health\":" + String(get_health()) + "}";
     client.println("HTTP/1.1 200 OK");
     client.println("Content-Type: application/json");
     client.println("Connection: close");
@@ -271,6 +289,18 @@ void handleRequest(WiFiClient client, String requestLine){
       case SET_Y_OFFSET: {
         float offset = requestLine.substring(requestLine.indexOf("offset=") + 7).toFloat();
         serverOnUpdate(SET_Y_OFFSET, offset, 0, 0);
+        break;
+      }
+
+      case SET_SERVO_ENABLED_COMMAND_CODE: {
+        int enabled = (requestLine.indexOf("enabled=1") != -1) ? 1 : 0;
+        serverOnUpdate(SET_SERVO_ENABLED_COMMAND_CODE, enabled, 0, 0);
+        break;
+      }
+
+      case SET_SERVO_PERIOD_COMMAND_CODE: {
+        int period = requestLine.substring(requestLine.indexOf("period=") + 7).toInt();
+        serverOnUpdate(SET_SERVO_PERIOD_COMMAND_CODE, period, 0, 0);
         break;
       }
     }
