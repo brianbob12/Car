@@ -17,12 +17,16 @@ void startActivity(){
   addAction(forward_fast_one);
   addAction(forward_fast_one);
   addAction(forward_fast_one);
+  addAction(inch_forward);
+  addAction(inch_forward);
+  addAction(inch_forward);
 
-  addAction(GOTO(4300+x_offset, 4700+y_offset, 1.75));
-  addAction(GOTO(4250+x_offset, 4250+y_offset, 1.5));
+  addAction(GOTO(4230+x_offset, 4700+y_offset, 1.75));
+  addAction(GOTO(4230+x_offset, 4250+y_offset, 1.25));
  
   //press button 1
-  addAction(TURNTO(180, 1.0));
+  addAction(TURNTO(180, 0.75));
+  addAction(inch_forward);
   addAction(inch_forward);
   addAction(inch_forward);
   addAction(inch_forward);
@@ -35,29 +39,32 @@ void startActivity(){
   addAction(forward_fast_one);
   addAction(forward_fast_one);
   addAction(forward_fast_one);
-  addAction(GOTO(5850+x_offset, 4250+y_offset, 1.75));
+  addAction(inch_forward);
+  addAction(GOTO(5850+x_offset, 4200+y_offset, 1.75));
 
   //press button 2
-  addAction(TURNTO(0, 0.5));
+  addAction(TURNTO(0, 1.0));
   addAction(inch_forward);
   addAction(inch_forward);
   addAction(inch_forward);
-  addAction(inch_forward);
+  addAction(inch_backward);
   addAction(inch_backward);
   addAction(inch_backward);
   addAction(inch_backward);
 
 
   //Get on ramp
-  addAction(TURNTO(270+35, 1.5));
+  addAction(TURNTO(270+25, 1.5));
   addAction(forward_fast_one);
+  addAction(forward_fast_one);
+  addAction(inch_forward);
   //addAction(TURNTO(260, 0.5));
   //addAction(inch_forward);
   //addAction(inch_forward);
-  addAction(GOTO(5650+x_offset, 3050+y_offset, 0.75));
+  addAction(GOTO(5750+x_offset, 2950+y_offset, 1.75));
 
   //go to button 3
-  addAction(TURNTO(175, 1));
+  addAction(TURNTO(180, 1));
   addAction(forward_fast_one);
   addAction(forward_fast_one);
   addAction(forward_fast_one);

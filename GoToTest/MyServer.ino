@@ -2,7 +2,8 @@
 #include "Defaults.h"
 #include "Vive.h"
 
-const char* ssid = "Kepler 186-f";  // AP mode SSID, no password needed
+const char* ssid = "Kepler";  // AP mode SSID, no password needed
+const char* password = "planet";
 
 const char body[] PROGMEM = R"===( 
 <!DOCTYPE html>  
@@ -164,7 +165,7 @@ void (*serverOnUpdate)(int command, float arg1, float arg2, float arg3);
 void setup_server(void (*onUpdate)(int command, float arg1, float arg2, float arg3)){
   Serial.println("Setting up server");
   serverOnUpdate = onUpdate;
-  WiFi.softAP(ssid, "");
+  WiFi.softAP(ssid, password);
   server.begin();
   Serial.printf("Server started on %s\n", WiFi.softAPIP().toString().c_str());
 }
