@@ -34,6 +34,19 @@ Action go_nowhere {
   .duration = 0
 };
 
+Action forward_max {
+  .name = "Forward Max",
+  .motor1_speed = 10.0,
+  .motor1_direction = true,
+  .motor2_speed = 10.0,
+  .motor2_direction = true,
+  .motor3_speed = 10.0,
+  .motor3_direction = true,
+  .motor4_speed = 10.0,
+  .motor4_direction = true,
+  .duration = 3000
+};
+
 Action forward_one_cell {
   .name = "Forward One Cell",
   .motor1_speed = 1.5,
@@ -253,6 +266,32 @@ Action turn_right_30_degrees {
   .motor4_speed = 1.5,
   .motor4_direction = true,
   .duration = 800 //1 second
+};
+
+Action turn_left_360_degrees {
+  .name = "Turn Left 360 Degrees",
+  .motor1_speed = 1.5,
+  .motor1_direction = true,
+  .motor2_speed = 1.5,
+  .motor2_direction = true,
+  .motor3_speed = 1.5,
+  .motor3_direction = false,
+  .motor4_speed = 1.5,
+  .motor4_direction = false,
+  .duration = 5000 //5 seconds
+};
+
+Action turn_right_360_degrees {
+  .name = "Turn Right 360 Degrees",
+  .motor1_speed = 1.5,
+  .motor1_direction = false,
+  .motor2_speed = 1.5,
+  .motor2_direction = false,
+  .motor3_speed = 1.5,
+  .motor3_direction = true,
+  .motor4_speed = 1.5,
+  .motor4_direction = true,
+  .duration = 5000 //5 seconds
 };
 
 Action turn_right_90_degrees {

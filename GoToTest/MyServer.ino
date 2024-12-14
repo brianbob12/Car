@@ -73,6 +73,9 @@ const char body[] PROGMEM = R"===(
   <button onclick="setServoEnabled(0)">Disable</button>
   <input type="number" id="setServoPeriod" value="500">
   <button onclick="setServoPeriod()">Set Period</button>
+
+  <h3>Forward Max</h3>
+  <button onclick="forwardMax()">Forward Max</button>
 </div>
 
 <script>
@@ -151,6 +154,10 @@ const char body[] PROGMEM = R"===(
     fetch(`/update?cmd=15&period=${period}`);  // SET_SERVO_PERIOD_COMMAND_CODE
   }
 
+  function forwardMax() {
+    fetch(`/update?cmd=16`);  // FORWARD_MAX_COMMAND_CODE
+  }
+
 
   // Add position update functionality
   async function updatePosition() {
@@ -169,6 +176,36 @@ const char body[] PROGMEM = R"===(
   // Update position every second
   setInterval(updatePosition, 1000);
   updatePosition(); // Initial update
+
+  // Add keyboard controls
+  document.addEventListener('keydown', function(event) {
+    switch(event.key.toLowerCase()) {
+      case 'w':
+        goForward();
+        break;
+      case 's':
+        goBackward();
+        break;
+      case 'a':
+        turnLeft();
+        break;
+      case 'd':
+        turnRight();
+        break;
+      case 'f':
+        forwardMax();
+        break;
+      case 'q':
+        setServoEnabled(1);
+        break;
+      case 'e':
+        setServoEnabled(0);
+        break;
+      case 'z':
+        abort();
+        break;
+    }
+  });
 </script>
 </body></html>  
 )===";
@@ -301,6 +338,11 @@ void handleRequest(WiFiClient client, String requestLine){
       case SET_SERVO_PERIOD_COMMAND_CODE: {
         int period = requestLine.substring(requestLine.indexOf("period=") + 7).toInt();
         serverOnUpdate(SET_SERVO_PERIOD_COMMAND_CODE, period, 0, 0);
+        break;
+      }
+
+      case FORWARD_MAX_COMMAND_CODE: {
+        serverOnUpdate(FORWARD_MAX_COMMAND_CODE, 0, 0, 0);
         break;
       }
     }

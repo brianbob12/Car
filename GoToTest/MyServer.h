@@ -27,6 +27,8 @@
 #define SET_SERVO_ENABLED_COMMAND_CODE 14
 #define SET_SERVO_PERIOD_COMMAND_CODE 15
 
+#define FORWARD_MAX_COMMAND_CODE 16
+
 void setup_server(
   void (*onUpdate)(int command, float arg1, float arg2, float arg3)
 );

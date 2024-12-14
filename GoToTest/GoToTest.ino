@@ -66,12 +66,12 @@ void on_server_update(int command, float arg1, float arg2, float arg3){
   else if(command == TURN_LEFT_COMMAND_CODE){
     set_vive_read_frequency(1);
     abortCurrentAction();
-    addAction(turn_left_30_degrees);
+    addAction(turn_left_360_degrees);
   }
   else if(command == TURN_RIGHT_COMMAND_CODE){
     set_vive_read_frequency(1);
     abortCurrentAction();
-    addAction(turn_right_30_degrees);
+    addAction(turn_right_360_degrees);
   }
   else if(command == SET_X_OFFSET){
     set_x_offset(arg1);
@@ -88,6 +88,11 @@ void on_server_update(int command, float arg1, float arg2, float arg3){
   }
   else if(command == SET_SERVO_PERIOD_COMMAND_CODE){
     set_servo_period(arg1);
+  }
+  else if(command == FORWARD_MAX_COMMAND_CODE){
+    set_vive_read_frequency(1);
+    abortCurrentAction();
+    addAction(forward_max);
   }
 }
 
